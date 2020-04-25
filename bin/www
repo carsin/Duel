@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('expresslearning:server');
+var debug = require('debug')('tet:server');
 var http = require('http');
 
 /**
@@ -74,17 +74,18 @@ function onError(error) {
             break;
         default:
             throw error;
-
     }
+}
 
-    /**
-     * Event listener for HTTP server "listening" event.
-     */
+/**
+ * Event listener for HTTP server "listening" event.
+ */
 
-    function onListening() {
-        var addr = server.address();
-        var bind = typeof addr === 'string'
-            ? 'pipe ' + addr
-            : 'port ' + addr.port;
-        debug('Listening on ' + bind);
-    }
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+}
+
