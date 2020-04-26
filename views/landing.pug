@@ -6,4 +6,9 @@ block content
         p Welcome to #{title}
         form(action="/", method="POST")
             input(name="usernameInput", type="username", placeholder="Enter a username")
+            br
+            label(for="reactionGame") Reaction game
+            br
+            input(name="reactionGame", type="checkbox", placeholder="Test")
+            br
             button(type="submit") Play

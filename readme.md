@@ -27,6 +27,3 @@ Ideas:
 Design:
     - Simple code in URL to link (fightmeirl.com/d3bd92n)
     - On main homepage ()
-
-TODO:
-MVP Landing
