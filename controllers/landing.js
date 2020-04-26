@@ -4,5 +4,5 @@ exports.renderLanding= function(req, res, next) {
 
 exports.submitUsername= function(req, res, next) {
     console.log("username: ", req.body.usernameInput)
-    res.redirect("/");
+    res.redirect("/play");
 }
