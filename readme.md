@@ -20,10 +20,13 @@ Ideas:
         - Rock paper scissors
         - Aim test
         - Simple speed math test
-        - Trivia
+        - Trivia (with a twist?)
     - Single or multiple rounds (bo3, bo5, bo7)
     - More than 1v1
 
 Design:
     - Simple code in URL to link (fightmeirl.com/d3bd92n)
     - On main homepage ()
+
+TODO:
+MVP Landing
