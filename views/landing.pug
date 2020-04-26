@@ -1,8 +1,9 @@
 extends layout
 
 block content
-    h1 FIGHTMEIRL
-    p Welcome to #{title}
-    form(action="/", method="POST")
-        input(name="usernameInput", type="username", placeholder="Enter a username")
-        button(type="submit") Play
+    div.container
+        h1 FIGHTMEIRL
+        p Welcome to #{title}
+        form(action="/", method="POST")
+            input(name="usernameInput", type="username", placeholder="Enter a username")
+            button(type="submit") Play
