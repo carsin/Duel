@@ -1,0 +1,23 @@
+{
+    "name": "duel",
+    "version": "1.0.0",
+    "description": "NAMES:\r * FIGHTMEIRL\r * FIGHTATLAN\r * FIGHTONLINE\r * FIGHTMEBRO\r * WILDWEST\r * STANDOFFS",
+    "main": "app.js",
+    "scripts": {
+        "start": "node ./bin/www",
+        "dev:start": "nodemon ./bin/www"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/carsin/Duel.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/carsin/Duel/issues"
+    },
+    "homepage": "https://github.com/carsin/Duel#readme",
+    "dependencies": {
+        "express": "^4.17.1"
+    }
+}

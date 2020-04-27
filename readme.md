@@ -1,10 +1,4 @@
-NAMES:
-* FIGHTMEIRL
-* FIGHTATLAN
-* FIGHTONLINE
-* FIGHTMEBRO
-* WILDWEST
-* STANDOFFS
+DUEL.WTF
 
 Concept: Dead simple website to fight your friend in no time.
 
