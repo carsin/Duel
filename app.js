@@ -31,18 +31,18 @@ app.use("/join", joinRouter);
 // IO
 var io = socketio(server);
 
-io.on("connection", function(socket) {
-    console.log("user connected to main page");
+io.on("index view", function(socket) {
+    console.log("user connected");
 
     socket.on("room create", function() {
         socket.emit("redirect", "/create");
-
         console.log("user created room");
     });
 
-    // socket.on("disconnect", function() {
-    //     console.log("user disconnected");
-    // });
+    socket.on("room join", function() {
+        socket.emit("redirect", "/join");
+        console.log("user joining room");
+    });
 });
 
 // Start server
