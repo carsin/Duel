@@ -3,9 +3,7 @@ var router = express.Router();
 var hri = require("human-readable-ids").hri;
 
 router.get("/", function(req, res, next) {
-    res.render("create", {
-        title: "Create Game",
-    });
+    res.render("create");
 });
 
 router.post("/", function(req, res, next) {
