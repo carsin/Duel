@@ -32,11 +32,17 @@ app.use("/join", joinRouter);
 var io = socketio(server);
 
 io.on("connection", function(socket) {
-    console.log("user connected");
+    console.log("user connected to main page");
 
-    socket.on("disconnect", function() {
-        console.log("user disconnected");
+    socket.on("room create", function() {
+        socket.emit("redirect", "/create");
+
+        console.log("user created room");
     });
+
+    // socket.on("disconnect", function() {
+    //     console.log("user disconnected");
+    // });
 });
 
 // Start server
