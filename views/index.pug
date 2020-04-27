@@ -3,4 +3,10 @@ html
     head
         title Duel
     body
-        h1 #{title}
+        .container
+            h1 #{title}
+            form(action="join", method="get")
+                input(type="submit" value="Join Game")
+            form(action="create", method="get")
+                input(type="submit" value="Create Game")
+        script(src="/javascripts/index.js")
