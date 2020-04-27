@@ -7,8 +7,4 @@ router.get("/", function(req, res) {
     });
 });
 
-router.post("joinGameRedirect", function(req, res) {
-    return res.redirect("/join")
-});
-
 module.exports = router;

@@ -4,4 +4,12 @@ html
         title Duel - Create Game
     body
         h1 #{title}
-
+        form(action="/create", method="POST")
+            input(type="text", name="usernameInput", placeholder="Enter your username")
+            h4 Enabled Games:
+            ul
+                li
+                    label(for="cpsGame") CPS Game Enabled:
+                    input(type="checkbox" name="cpsGame")
+            input(type="submit", value="Create Game")
+        script(src="javascripts/create.js")
