@@ -1,1 +1,1 @@
-console.log("Create");
+var socket = io();
