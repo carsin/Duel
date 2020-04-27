@@ -6,10 +6,13 @@ html
         h1 #{title}
         form(action="/create", method="POST")
             input(type="text", name="usernameInput", placeholder="Enter your username")
-            h4 Enabled Games:
+            h4 Select Game:
             ul
                 li
-                    label(for="cpsGame") CPS Game Enabled:
-                    input(type="checkbox" name="cpsGame")
+                    label(for="cpsGame") CPS Game:
+                    input(type="radio" name="selectedGame" value="cpsGame")
+                li
+                    label(for="rngGame") RNG Game:
+                    input(type="radio" name="selectedGame" value="rngGame")
             input(type="submit", value="Create Game")
         script(src="javascripts/create.js")
