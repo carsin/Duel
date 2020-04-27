@@ -3,9 +3,7 @@ var router = express.Router();
 
 var landing = require("../controllers/landing");
 
-/* GET home page. */
 router.get("/", landing.renderLanding);
-
-router.post("/", landing.submitUsername);
+router.post("/", landing.startGame);
 
 module.exports = router;
