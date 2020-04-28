@@ -13,6 +13,10 @@ html
             button(id="createRoomViewButton") Create Room
         .view.hidden#joinRoomView
             h1 Join Room
+            #roomJoinForm
+                label(for="roomJoinIdInput") Room ID:
+                input(type="text", name="roomJoinIdInput" id="roomJoinIdInput", placeholder="nasty-goat-72")
+                button(id="roomJoinSubmitButton") Join Room
             button.mainViewButton Main Menu
         .view.hidden#createRoomView
             h1 RoomId:

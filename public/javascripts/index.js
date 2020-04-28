@@ -29,6 +29,15 @@ $(".mainViewButton").click(function() {
     $("#mainView").removeClass("hidden");
 });
 
+$("#roomJoinSubmitButton").click(function() {
+    if ($("#roomJoinIdInput").val() == "") {
+        alert("no id input")
+    } else {
+        socket.emit("attemptRoomJoin", username, $("#roomJoinIdInput").val());
+        console.log(username + " try join game" +  $("#roomJoinIdInput").val());
+    }
+});
+
 $("#createGameButton").click(function() {
     socket.emit("game create", username, $("input[name=selectedGame]:checked", "#gameCreateForm").val())
 });
@@ -36,5 +45,12 @@ $("#createGameButton").click(function() {
 socket.on("room created", function(roomId) {
     console.log("room joined");
     $("#roomId").html(roomId);
+});
 
+socket.on("room join failed", function() {
+    console.log("room join failed");
+});
+
+socket.on("room join success", function() {
+    console.log("room join success");
 });

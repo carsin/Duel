@@ -4,7 +4,6 @@ const hri = require("human-readable-ids").hri;
 exports.socketServer = function(app, server) {
     var io = socketio.listen(server);
     io.on("connection", function(socket) {
-        var roomId;
         console.log("user connected");
 
         socket.on("game create", function(usernameInput, selectedGame) {
@@ -12,14 +11,26 @@ exports.socketServer = function(app, server) {
         });
 
         socket.on("room create", function() {
-            roomId = hri.random();
+            var roomId = hri.random();
             socket.join(roomId);
-            console.log("user created room with id " + roomId)
             socket.emit("room created", roomId);
+            console.log("user created room with id " + roomId)
         });
 
-        socket.on("room join", function() {
-            console.log("user joining room");
-        });
+        socket.on("attemptRoomJoin", function(username, roomId) {
+            // Unelegant. Refactor in future?
+            try {
+                if (io.sockets.adapter.rooms[roomId].length >= 1) {
+                    socket.join(roomId);
+                    socket.emit("room join success");
+                    console.log(username + " joined room " + roomId);
+                }
+            }
+            catch(e) {
+                socket.emit("room join failed");
+                console.log(username + " failed joining room " + roomId);
+
+            }
+       });
     });
 }
