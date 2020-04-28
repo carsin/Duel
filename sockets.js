@@ -14,6 +14,7 @@ exports.socketServer = function(app, server) {
             io.sockets.adapter.rooms[roomId].usernames.push(username);
             console.log(io.sockets.adapter.rooms[roomId]);
             socket.emit("room created", roomId);
+            io.to(roomId).emit("newPlayerJoin", username);
             console.log("user created room with id " + roomId)
         });
 
@@ -23,8 +24,10 @@ exports.socketServer = function(app, server) {
                 if (io.sockets.adapter.rooms[roomId].length >= 1) {
                     if (!(io.sockets.adapter.rooms[roomId].usernames.includes(username))) {
                         socket.join(roomId);
-                        socket.emit("room join success");
+                        io.to(roomId).emit("newPlayerJoin", username);
+                        socket.emit("room join success", io.sockets.adapter.rooms[roomId]);
                         console.log(username + " joined room " + roomId);
+                        console.log(io.sockets.adapter.rooms[roomId]);
                     } else {
                         console.log(username + " failed joining room " + roomId + ", username taken");
                     }

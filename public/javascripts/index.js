@@ -16,14 +16,11 @@ $("#joinRoomViewButton").click(function() {
 $("#createRoomViewButton").click(function() {
     getUsername();
     socket.emit("createRoom", username);
-    $("#usernameDisplay").html(username);
-    $("#mainView").addClass("hidden");
-    $("#createRoomView").removeClass("hidden");
 });
 
 $(".mainViewButton").click(function() {
     $("#joinRoomView").addClass("hidden");
-    $("#createRoomView").addClass("hidden");
+    $("#lobbyRoomView").addClass("hidden");
     $("#mainView").removeClass("hidden");
 });
 
@@ -39,12 +36,18 @@ $("#roomJoinSubmitButton").click(function() {
 socket.on("room created", function(roomId) {
     console.log("room joined");
     $("#roomIdDisplay").html(roomId);
+    $("#mainView").addClass("hidden");
+    $("#lobbyRoomView").removeClass("hidden");
 });
 
 socket.on("room join failed", function() {
     alert("Failed joining room " + inputRoomId);
 });
 
-socket.on("room join success", function() {
+socket.on("room join success", function(room) {
     console.log("room join success");
+});
+
+socket.on("newPlayerJoin", function(username) {
+    $("#playerList").append("<li>" + username + "</li>")
 });

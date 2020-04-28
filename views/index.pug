@@ -18,11 +18,9 @@ html
                 input(type="text", name="roomJoinIdInput" id="roomJoinIdInput", placeholder="nasty-goat-72")
                 button(id="roomJoinSubmitButton") Join Room
             button.mainViewButton Main Menu
-        .view.hidden#createRoomView
+        .view.hidden#lobbyRoomView
             h1 RoomId:
                 span#roomIdDisplay
-            p Username:
-                span#usernameDisplay
             #gameCreateForm
                 p Select Game:
                 ul
@@ -32,7 +30,10 @@ html
                     li
                         label(for="rngGame") RNG Game:
                         input(type="radio" name="selectedGame" value="rngGame")
-                button#createGameButton Create Game
+                button#startGameButton Start Game
+            p Player List:
+            ul#playerList
+
             button.mainViewButton Main Menu
 
         script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js")
