@@ -21,7 +21,3 @@ $(".mainMenuButton").click(function() {
     $("#createRoomView").hide();
     $("#mainView").show();
 });
-
-// socket.on("redirect", function(destination) {
-//     window.location.href = destination;
-// });
