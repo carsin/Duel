@@ -3,9 +3,10 @@ const logger = require("morgan");
 const path = require("path");
 const http = require("http");
 
+const socketio = require("socket.io");
+
 var app = express();
 var server = http.createServer(app);
-var socketio = require("socket.io");
 
 app.use(logger("dev"));
 
@@ -18,6 +19,9 @@ app.use(express.urlencoded({extended: false}));
 // Set public directory
 app.use(express.static(path.join(__dirname, "public")));
 
+const sockets = require("./sockets");
+sockets.socketServer(app, server);
+
 // Load routes
 var indexRouter = require("./routes/index");
 var createRouter = require("./routes/create");
@@ -28,25 +32,9 @@ app.use("/", indexRouter);
 app.use("/create", createRouter);
 app.use("/join", joinRouter);
 
-// IO
-var io = socketio(server);
-
-io.on("index view", function(socket) {
-    console.log("user connected");
-
-    socket.on("room create", function() {
-        socket.emit("redirect", "/create");
-        console.log("user created room");
-    });
-
-    socket.on("room join", function() {
-        socket.emit("redirect", "/join");
-        console.log("user joining room");
-    });
-});
-
 // Start server
 server.listen(3000, function() {
     var port = server.address().port
     console.log("Server running on localhost:" + port)
 });
+
