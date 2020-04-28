@@ -4,20 +4,24 @@ var socket = io();
 //     socket.emit("index view")
 // });
 
-$("#joinRoomButton").click(function() {
+$("#joinRoomViewButton").click(function() {
     socket.emit("room join");
     $("#mainView").hide();
     $("#joinRoomView").show();
 });
 
-$("#createRoomButton").click(function() {
+$("#createRoomViewButton").click(function() {
     socket.emit("room create");
     $("#mainView").hide();
     $("#createRoomView").show();
 });
 
-$(".mainMenuButton").click(function() {
+$(".mainViewButton").click(function() {
     $("#joinRoomView").hide();
     $("#createRoomView").hide();
     $("#mainView").show();
+});
+
+$("#createGameButton").click(function() {
+    socket.emit("game create", $("#usernameInput").val(), $("input[name=selectedGame]:checked", "#gameCreateForm").val())
 });
