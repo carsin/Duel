@@ -29,9 +29,7 @@ $("#createRoomViewButton").click(function() {
 });
 
 $(".mainViewButton").click(function() {
-    $("#joinRoomView").addClass("hidden");
-    $("#lobbyRoomView").addClass("hidden");
-    $("#mainView").removeClass("hidden");
+    location.reload();
 });
 
 $("#roomJoinSubmitButton").click(function() {
@@ -47,27 +45,31 @@ $("#roomJoinSubmitButton").click(function() {
 // ─── SOCKET HANDLERS ────────────────────────────────────────────────────────────
 //
 
-socket.on("room created", function(roomId) {
+socket.on("confirmRoomCreation", function(roomId) {
     console.log("room joined");
     $("#roomIdDisplay").html(roomId);
     $("#mainView").addClass("hidden");
+    $("#gameCreateForm").removeClass("hidden");
     $("#lobbyRoomView").removeClass("hidden");
 });
 
-socket.on("room join failed", function() {
+socket.on("roomJoinFail", function() {
     alert("Failed joining room " + inputRoomId);
 });
 
-socket.on("room join success", function(room, roomId) {
+socket.on("roomJoinSuccess", function(room, roomId) {
     $("#roomIdDisplay").html(roomId);
     $("#joinRoomView").addClass("hidden");
     $("#lobbyRoomView").removeClass("hidden");
-
 });
 
 socket.on("updatePlayerList", function(usernames) {
     $("#playerList").html("");
     for (var i = 0; i < usernames.length; i++) {
-        $("#playerList").append("<li>" + usernames[i] + "</li>");
+        if (i == 0) {
+            $("#playerList").append("<li>" + usernames[i] + " (host) </li>");
+        } else {
+            $("#playerList").append("<li>" + usernames[i] + "</li>");
+        }
     }
 });

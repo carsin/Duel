@@ -4,8 +4,6 @@ const hri = require("human-readable-ids").hri; // Code own version?
 exports.socketServer = function(app, server) {
     var io = socketio.listen(server);
     io.on("connection", function(socket) {
-        console.log("user connected");
-
         socket.on("createRoom", function(username) {
             var roomId = hri.random();
             socket.join(roomId);
@@ -13,14 +11,14 @@ exports.socketServer = function(app, server) {
             var room = io.sockets.adapter.rooms[roomId];
 
             socket.username = username;
-            room.usernames = [];
-            room.usernames.push(username);
+            room.usernames = [username];
 
-            socket.emit("room created", roomId);
+            socket.emit("confirmRoomCreation", roomId);
             io.to(roomId).emit("updatePlayerList", room.usernames);
 
             socket.on("disconnect", function() {
                 io.to(roomId).emit("updatePlayerList", room.usernames);
+                console.log(socket.username + "(host) disconnected from room " + roomId);
             });
             console.log("user created room with id " + roomId)
         });
@@ -38,7 +36,7 @@ exports.socketServer = function(app, server) {
                         socket.username = username;
 
                         io.to(roomId).emit("updatePlayerList", room.usernames);
-                        socket.emit("room join success", room, roomId);
+                        socket.emit("roomJoinSuccess", room, roomId);
 
                         console.log(username + " joined room " + roomId);
 
@@ -50,11 +48,11 @@ exports.socketServer = function(app, server) {
                         });
                     } else {
                         console.log(username + " failed joining room " + roomId + ", username taken");
-                        socket.emit("room join failed");
+                        socket.emit("roomJoinFail");
                     }
                 }
             } catch(e) {
-                socket.emit("room join failed");
+                socket.emit("roomJoinFail");
                 console.log(username + " failed joining room " + roomId + ", room doesn't exist");
             }
        });
