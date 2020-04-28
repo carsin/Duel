@@ -7,7 +7,7 @@ exports.socketServer = function(app, server) {
         console.log("user connected");
 
         socket.on("game create", function(usernameInput, selectedGame) {
-            console.log(selectedGame + " game created by " + usernameInput + "ID: " + hri.random());
+            console.log(selectedGame + " game created by " + usernameInput + " ID: " + hri.random());
         });
 
         socket.on("room create", function() {
