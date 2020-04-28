@@ -1,3 +1,9 @@
+//
+// ────────────────────────────────────────────────────────────────────────────────────-─────────
+//   :::::: C L I E N T - S I D E   J A V A S C R I P T : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────────────────────────────────────────
+//
+
 var socket = io();
 var username = "Default";
 var inputRoomId;
@@ -6,6 +12,10 @@ function getUsername() {
     if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
     return username;
 }
+
+//
+// ─── JQUERY HANDLERS ────────────────────────────────────────────────────────────
+//
 
 $("#joinRoomViewButton").click(function() {
     getUsername();
@@ -33,6 +43,10 @@ $("#roomJoinSubmitButton").click(function() {
     }
 });
 
+//
+// ─── SOCKET HANDLERS ────────────────────────────────────────────────────────────
+//
+
 socket.on("room created", function(roomId) {
     console.log("room joined");
     $("#roomIdDisplay").html(roomId);
@@ -44,10 +58,16 @@ socket.on("room join failed", function() {
     alert("Failed joining room " + inputRoomId);
 });
 
-socket.on("room join success", function(room) {
-    console.log("room join success");
+socket.on("room join success", function(room, roomId) {
+    $("#roomIdDisplay").html(roomId);
+    $("#joinRoomView").addClass("hidden");
+    $("#lobbyRoomView").removeClass("hidden");
+
 });
 
-socket.on("newPlayerJoin", function(username) {
-    $("#playerList").append("<li>" + username + "</li>")
+socket.on("updatePlayerList", function(usernames) {
+    $("#playerList").html("");
+    for (var i = 0; i < usernames.length; i++) {
+        $("#playerList").append("<li>" + usernames[i] + "</li>");
+    }
 });

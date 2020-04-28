@@ -9,27 +9,48 @@ exports.socketServer = function(app, server) {
         socket.on("createRoom", function(username) {
             var roomId = hri.random();
             socket.join(roomId);
+
+            var room = io.sockets.adapter.rooms[roomId];
+
             socket.username = username;
-            io.sockets.adapter.rooms[roomId].usernames = [];
-            io.sockets.adapter.rooms[roomId].usernames.push(username);
-            console.log(io.sockets.adapter.rooms[roomId]);
+            room.usernames = [];
+            room.usernames.push(username);
+
             socket.emit("room created", roomId);
-            io.to(roomId).emit("newPlayerJoin", username);
+            io.to(roomId).emit("updatePlayerList", room.usernames);
+
+            socket.on("disconnect", function() {
+                io.to(roomId).emit("updatePlayerList", room.usernames);
+            });
             console.log("user created room with id " + roomId)
         });
 
         socket.on("attemptRoomJoin", function(username, roomId) {
             // Not elegant. Refactor in future?
+            var room = io.sockets.adapter.rooms[roomId];
+
             try {
-                if (io.sockets.adapter.rooms[roomId].length >= 1) {
-                    if (!(io.sockets.adapter.rooms[roomId].usernames.includes(username))) {
+                if (room.length >= 1) {
+                    if (!(room.usernames.includes(username))) {
                         socket.join(roomId);
-                        io.to(roomId).emit("newPlayerJoin", username);
-                        socket.emit("room join success", io.sockets.adapter.rooms[roomId]);
+
+                        room.usernames.push(username);
+                        socket.username = username;
+
+                        io.to(roomId).emit("updatePlayerList", room.usernames);
+                        socket.emit("room join success", room, roomId);
+
                         console.log(username + " joined room " + roomId);
-                        console.log(io.sockets.adapter.rooms[roomId]);
+
+                        socket.on("disconnect", function() {
+                            var index = room.usernames.indexOf(socket.username);
+                            if (index !== -1) room.usernames.splice(index, 1);
+                            io.to(roomId).emit("updatePlayerList", room.usernames);
+                            console.log(socket.username + " disconnected from room " + roomId);
+                        });
                     } else {
                         console.log(username + " failed joining room " + roomId + ", username taken");
+                        socket.emit("room join failed");
                     }
                 }
             } catch(e) {
