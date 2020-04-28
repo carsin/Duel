@@ -15,9 +15,14 @@ exports.socketServer = function(app, server) {
 
             socket.emit("confirmRoomCreation", roomId);
             io.to(roomId).emit("updatePlayerList", room.usernames);
+            io.to(roomId).emit("serverMessage", socket.username + " connected.");
 
             socket.on("disconnect", function() {
+                var index = room.usernames.indexOf(socket.username);
+                if (index !== -1) room.usernames.splice(index, 1);
+
                 io.to(roomId).emit("updatePlayerList", room.usernames);
+                io.to(roomId).emit("serverMessage", "Host " + socket.username + " disconnected. The game cannot be started.");
                 console.log(socket.username + "(host) disconnected from room " + roomId);
             });
             console.log("user created room with id " + roomId)
@@ -36,6 +41,7 @@ exports.socketServer = function(app, server) {
                         socket.username = username;
 
                         io.to(roomId).emit("updatePlayerList", room.usernames);
+                        io.to(roomId).emit("serverMessage", socket.username + " connected.");
                         socket.emit("roomJoinSuccess", room, roomId);
 
                         console.log(username + " joined room " + roomId);
@@ -43,7 +49,9 @@ exports.socketServer = function(app, server) {
                         socket.on("disconnect", function() {
                             var index = room.usernames.indexOf(socket.username);
                             if (index !== -1) room.usernames.splice(index, 1);
+
                             io.to(roomId).emit("updatePlayerList", room.usernames);
+                            io.to(roomId).emit("serverMessage", socket.username + " disconnected.");
                             console.log(socket.username + " disconnected from room " + roomId);
                         });
                     } else {

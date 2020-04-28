@@ -86,3 +86,7 @@ socket.on("updatePlayerList", function(usernames) {
 socket.on("chatMessage", function(message, username) {
     $("#chatMessages").append("<li>" + username + ": " +  message + "</li>");
 });
+
+socket.on("serverMessage", function(message) {
+    $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
+});

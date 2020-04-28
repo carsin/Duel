@@ -40,10 +40,15 @@ h1, h3, p {
 }
 
 #messageWrapper {
-    overflow-y: scroll;
+    overflow-y: auto;
     display: flex;
     flex-direction: column-reverse;
     height: 100%;
     margin: 0;
     padding: 0;
+}
+
+.serverMessage {
+    color: gray;
+    font-style: italic;
 }
