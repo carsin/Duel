@@ -2,14 +2,29 @@ doctype html
 html
     head
         title Duel
+        link(rel="stylesheet", href="stylesheets/style.css")
     body
-        .container
+        .view#mainView
             h1 Duel.wtf
-            //- button(id="joinRoomButton") Join Room
-            //- button(id="createRoomButton") Create Room
-
             button(id="joinRoomButton") Join Room
             button(id="createRoomButton") Create Room
+        .view.hidden#joinRoomView
+            h1 Join Room
+            button.mainMenuButton Main Menu
+        .view.hidden#createRoomView
+            h1 Create Room
+            form(action="/create", method="POST", id="gameCreateForm")
+                input(type="text", name="usernameInput", placeholder="Enter your username")
+                h4 Select Game:
+                ul
+                    li
+                        label(for="cpsGame") CPS Game:
+                        input(type="radio" name="selectedGame" value="cpsGame" checked)
+                    li
+                        label(for="rngGame") RNG Game:
+                        input(type="radio" name="selectedGame" value="rngGame")
+                input(type="submit", value="Create Game")
+            button.mainMenuButton Main Menu
 
         script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js")
         script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")

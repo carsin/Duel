@@ -6,12 +6,10 @@ exports.socketServer = function(app, server) {
         console.log("user connected");
 
         socket.on("room create", function() {
-            socket.emit("redirect", "/create");
             console.log("user created room");
         });
 
         socket.on("room join", function() {
-            socket.emit("redirect", "/join");
             console.log("user joining room");
         });
     });
