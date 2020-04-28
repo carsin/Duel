@@ -9,14 +9,14 @@ function getUsername() {
 
 $("#joinRoomViewButton").click(function() {
     getUsername();
-    socket.emit("room join");
     $("#mainView").addClass("hidden");
     $("#joinRoomView").removeClass("hidden");
 });
 
 $("#createRoomViewButton").click(function() {
     getUsername();
-    socket.emit("room create");
+    socket.emit("createRoom", username);
+    $("#usernameDisplay").html(username);
     $("#mainView").addClass("hidden");
     $("#createRoomView").removeClass("hidden");
 });
@@ -38,7 +38,7 @@ $("#roomJoinSubmitButton").click(function() {
 
 socket.on("room created", function(roomId) {
     console.log("room joined");
-    $("#roomId").html(roomId);
+    $("#roomIdDisplay").html(roomId);
 });
 
 socket.on("room join failed", function() {

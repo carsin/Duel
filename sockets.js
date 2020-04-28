@@ -1,33 +1,37 @@
 const socketio = require("socket.io");
-const hri = require("human-readable-ids").hri;
+const hri = require("human-readable-ids").hri; // Code own version?
 
 exports.socketServer = function(app, server) {
     var io = socketio.listen(server);
     io.on("connection", function(socket) {
         console.log("user connected");
 
-        socket.on("game create", function(usernameInput, selectedGame) {
-        });
-
-        socket.on("room create", function() {
+        socket.on("createRoom", function(username) {
             var roomId = hri.random();
             socket.join(roomId);
+            socket.username = username;
+            io.sockets.adapter.rooms[roomId].usernames = [];
+            io.sockets.adapter.rooms[roomId].usernames.push(username);
+            console.log(io.sockets.adapter.rooms[roomId]);
             socket.emit("room created", roomId);
             console.log("user created room with id " + roomId)
         });
 
         socket.on("attemptRoomJoin", function(username, roomId) {
-            // Unelegant. Refactor in future?
+            // Not elegant. Refactor in future?
             try {
                 if (io.sockets.adapter.rooms[roomId].length >= 1) {
-                    socket.join(roomId);
-                    socket.emit("room join success");
-                    console.log(username + " joined room " + roomId);
+                    if (!(io.sockets.adapter.rooms[roomId].usernames.includes(username))) {
+                        socket.join(roomId);
+                        socket.emit("room join success");
+                        console.log(username + " joined room " + roomId);
+                    } else {
+                        console.log(username + " failed joining room " + roomId + ", username taken");
+                    }
                 }
             } catch(e) {
                 socket.emit("room join failed");
-                console.log(username + " failed joining room " + roomId);
-
+                console.log(username + " failed joining room " + roomId + ", room doesn't exist");
             }
        });
     });
