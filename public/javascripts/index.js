@@ -32,3 +32,9 @@ $(".mainViewButton").click(function() {
 $("#createGameButton").click(function() {
     socket.emit("game create", username, $("input[name=selectedGame]:checked", "#gameCreateForm").val())
 });
+
+socket.on("room created", function(roomId) {
+    console.log("room joined");
+    $("#roomId").html(roomId);
+
+});
