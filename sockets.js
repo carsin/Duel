@@ -7,7 +7,6 @@ exports.socketServer = function(app, server) {
         console.log("user connected");
 
         socket.on("game create", function(usernameInput, selectedGame) {
-            console.log(selectedGame + " game created by " + usernameInput + " ID: " + roomId);
         });
 
         socket.on("room create", function() {
@@ -25,8 +24,7 @@ exports.socketServer = function(app, server) {
                     socket.emit("room join success");
                     console.log(username + " joined room " + roomId);
                 }
-            }
-            catch(e) {
+            } catch(e) {
                 socket.emit("room join failed");
                 console.log(username + " failed joining room " + roomId);
 

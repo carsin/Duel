@@ -1,11 +1,9 @@
 var socket = io();
 var username = "Default";
+var inputRoomId;
 
 function getUsername() {
-    if ($("#usernameInput").val() != "") {
-        username = $("#usernameInput").val();
-    }
-
+    if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
     return username;
 }
 
@@ -33,13 +31,9 @@ $("#roomJoinSubmitButton").click(function() {
     if ($("#roomJoinIdInput").val() == "") {
         alert("no id input")
     } else {
-        socket.emit("attemptRoomJoin", username, $("#roomJoinIdInput").val());
-        console.log(username + " try join game" +  $("#roomJoinIdInput").val());
+        inputRoomId = $("#roomJoinIdInput").val();
+        socket.emit("attemptRoomJoin", username, inputRoomId);
     }
-});
-
-$("#createGameButton").click(function() {
-    socket.emit("game create", username, $("input[name=selectedGame]:checked", "#gameCreateForm").val())
 });
 
 socket.on("room created", function(roomId) {
@@ -48,7 +42,7 @@ socket.on("room created", function(roomId) {
 });
 
 socket.on("room join failed", function() {
-    console.log("room join failed");
+    alert("Failed joining room " + inputRoomId);
 });
 
 socket.on("room join success", function() {
