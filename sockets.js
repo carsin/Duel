@@ -2,7 +2,7 @@ const socketio = require("socket.io");
 
 exports.socketServer = function(app, server) {
     var io = socketio.listen(server);
-    io.on("index view", function(socket) {
+    io.on("connection", function(socket) {
         console.log("user connected");
 
         socket.on("room create", function() {
