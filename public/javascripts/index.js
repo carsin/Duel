@@ -1,27 +1,34 @@
 var socket = io();
+var username = "Default";
 
-// socket.on("connect", function() {
-//     socket.emit("index view")
-// });
+function getUsername() {
+    if ($("#usernameInput").val() != "") {
+        username = $("#usernameInput").val();
+    }
+
+    return username;
+}
 
 $("#joinRoomViewButton").click(function() {
+    getUsername();
     socket.emit("room join");
-    $("#mainView").hide();
-    $("#joinRoomView").show();
+    $("#mainView").addClass("hidden");
+    $("#joinRoomView").removeClass("hidden");
 });
 
 $("#createRoomViewButton").click(function() {
+    getUsername();
     socket.emit("room create");
-    $("#mainView").hide();
-    $("#createRoomView").show();
+    $("#mainView").addClass("hidden");
+    $("#createRoomView").removeClass("hidden");
 });
 
 $(".mainViewButton").click(function() {
-    $("#joinRoomView").hide();
-    $("#createRoomView").hide();
-    $("#mainView").show();
+    $("#joinRoomView").addClass("hidden");
+    $("#createRoomView").addClass("hidden");
+    $("#mainView").removeClass("hidden");
 });
 
 $("#createGameButton").click(function() {
-    socket.emit("game create", $("#usernameInput").val(), $("input[name=selectedGame]:checked", "#gameCreateForm").val())
+    socket.emit("game create", username, $("input[name=selectedGame]:checked", "#gameCreateForm").val())
 });

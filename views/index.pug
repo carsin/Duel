@@ -6,6 +6,9 @@ html
     body
         .view#mainView
             h1 Duel.wtf
+            label(for="usernameInput") Username:
+            input(type="text", name="usernameInput" id="usernameInput", placeholder="Default")
+            br
             button(id="joinRoomViewButton") Join Room
             button(id="createRoomViewButton") Create Room
         .view.hidden#joinRoomView
@@ -14,7 +17,6 @@ html
         .view.hidden#createRoomView
             h1 Create Room
             #gameCreateForm
-                input(type="text", id="usernameInput", placeholder="Enter your username")
                 h4 Select Game:
                 ul
                     li
