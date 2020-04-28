@@ -56,5 +56,10 @@ exports.socketServer = function(app, server) {
                 console.log(username + " failed joining room " + roomId + ", room doesn't exist");
             }
        });
+
+       socket.on("chatMessage", function(message, username, roomId) {
+           io.to(roomId).emit("chatMessage", message, username);
+       });
+
     });
 }

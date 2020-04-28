@@ -7,22 +7,21 @@ html
         .view#mainView
             h1 Duel.wtf
             label(for="usernameInput") Username:
-            input(type="text", name="usernameInput" id="usernameInput", placeholder="Default")
+            input(type="text", name="usernameInput", placeholder="Default")#usernameInput
             br
-            button(id="joinRoomViewButton") Join Room
-            button(id="createRoomViewButton") Create Room
+            button#joinRoomViewButton Join Room
+            button#createRoomViewButton Create Room
         .view.hidden#joinRoomView
             h1 Join Room
             #roomJoinForm
                 label(for="roomJoinIdInput") Room ID:
-                input(type="text", name="roomJoinIdInput" id="roomJoinIdInput", placeholder="nasty-goat-72")
-                button(id="roomJoinSubmitButton") Join Room
-            button.mainViewButton Main Menu
+                input(type="text", name="roomJoinIdInput", placeholder="nasty-goat-72")#roomJoinIdInput
+                button#roomJoinSubmitButton Join Room
         .view.hidden#lobbyRoomView
             h1 ID:
                 span#roomIdDisplay
             #gameCreateForm.hidden
-                p Select Game:
+                h3 Host Options:
                 ul
                     li
                         label(for="cpsGame") CPS Game:
@@ -31,10 +30,17 @@ html
                         label(for="rngGame") RNG Game:
                         input(type="radio" name="selectedGame" value="rngGame")
                 button#startGameButton Start Game
-            p Player List:
+            h3 Player List:
             ul#playerList
+            #chatbox
+                #messageWrapper
+                    ul#chatMessages
+                form(action="")#chatMessageForm
+                    input(type="text", placeholder="Type here")#chatMessageInput
+                    button#sendChat Send
 
-            button.mainViewButton Main Menu
+        br
+        button.mainViewButton Main Menu
 
         script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js")
         script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js")

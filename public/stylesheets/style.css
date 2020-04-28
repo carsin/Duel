@@ -1,10 +1,24 @@
+* {
+    box-sizing: border-box;
+}
+
 html, body {
+    height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
     font-family: "Helvetica", sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-h1, p {
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    word-wrap: break-word;
+}
+
+h1, h3, p {
     margin: 0;
     padding: 0;
 }
@@ -13,7 +27,23 @@ h1, p {
     display: none;
 }
 
-.view {
-    width: 100vw;
-    height: 100vh;
+#chatbox {
+    display: inline-block;
+    height: 20vh;
+    width: 25vw;
+    border: 1px solid black;
+}
+
+#chatMessages {
+    margin: 0;
+    padding: 0;
+}
+
+#messageWrapper {
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column-reverse;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }

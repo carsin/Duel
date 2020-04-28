@@ -7,6 +7,7 @@
 var socket = io();
 var username = "Default";
 var inputRoomId;
+var currentRoomId = "";
 
 function getUsername() {
     if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
@@ -41,12 +42,19 @@ $("#roomJoinSubmitButton").click(function() {
     }
 });
 
+$("#chatMessageForm").submit(function(e) {
+    e.preventDefault();
+    socket.emit("chatMessage", $("#chatMessageInput").val(), username, currentRoomId)
+    $("#chatMessageInput").val("");
+    return false;
+});
+
 //
 // ─── SOCKET HANDLERS ────────────────────────────────────────────────────────────
 //
 
 socket.on("confirmRoomCreation", function(roomId) {
-    console.log("room joined");
+    currentRoomId = roomId;
     $("#roomIdDisplay").html(roomId);
     $("#mainView").addClass("hidden");
     $("#gameCreateForm").removeClass("hidden");
@@ -58,6 +66,7 @@ socket.on("roomJoinFail", function() {
 });
 
 socket.on("roomJoinSuccess", function(room, roomId) {
+    currentRoomId = roomId;
     $("#roomIdDisplay").html(roomId);
     $("#joinRoomView").addClass("hidden");
     $("#lobbyRoomView").removeClass("hidden");
@@ -72,4 +81,8 @@ socket.on("updatePlayerList", function(usernames) {
             $("#playerList").append("<li>" + usernames[i] + "</li>");
         }
     }
+});
+
+socket.on("chatMessage", function(message, username) {
+    $("#chatMessages").append("<li>" + username + ": " +  message + "</li>");
 });
