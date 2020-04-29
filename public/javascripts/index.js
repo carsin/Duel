@@ -9,11 +9,18 @@ var currentReadyButtonClicked;
 //
 
 $(document).ready(function() {
-    $("#usernameInput").val(username);
-
+    $("#usernameDisplay").html(" " + username)
     $("#usernameInputForm").submit(function(e) {
         e.preventDefault();
-        if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
+        getUsername = $("#usernameInput").val();
+        if (getUsername.trim() != "" && getUsername.length <= 16) {
+            username = getUsername.replace(/</g, "&lt;").replace(/>/g, "&gt;");;
+            $("#usernameDisplay").html(" " + username)
+            $("#usernameInput").val("");
+        } else {
+            $("#usernameInput").val("");
+            alert("Username is empty or more than 16 characters long.");
+        }
     });
 
     $("#joinRoomViewButton").click(function() {
@@ -42,12 +49,19 @@ $(document).ready(function() {
 
     $("#chatMessageForm").submit(function(e) {
         e.preventDefault();
-        socket.emit("chatMessage", $("#chatMessageInput").val(), username, currentRoomId)
+        message = $("#chatMessageInput").val();
+
+        if (message.trim() != "") {
+            socket.emit("chatMessage", message, username, currentRoomId)
+        } else {
+            alert("Your message is empty");
+        }
+
         $("#chatMessageInput").val("");
     });
 
     $("#startGameButton").click(function() {
-        var selectedGame = $("input[name=selectedGame]:checked", "#gameCreateForm").val()
+        selectedGame = $("input[name=selectedGame]:checked", "#gameCreateForm").val()
         socket.emit("gameStarted", selectedGame);
         console.log(selectedGame + " game started");
     });
@@ -101,10 +115,17 @@ socket.on("updatePlayerList", function(usernames) {
 });
 
 socket.on("chatMessage", function(message, username) {
+    // Prevent html injection
+    message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
     $("#chatMessages").append("<li>" + username + ": " +  message + "</li>");
 });
 
 socket.on("serverMessage", function(message) {
+    // Prevent html injection
+    message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+
     $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
 });
 
