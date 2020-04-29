@@ -103,9 +103,9 @@ socket.on("loadGame", function(gameToLoad) {
     $("#gameViewContainer").removeClass("hidden");
     console.log(selectedGame + " loaded");
 
-    if (selectedGame === "cpsGameView") {
+    if (selectedGame === "cpsGame") {
         $("#cpsGameView").removeClass("hidden");
-    } else if (selectedGame === "rngGameView") {
+    } else if (selectedGame === "rngGame") {
         $("#rngGameView").removeClass("hidden");
     } else {
         console.log("couldn't find game " + selectedGame);
