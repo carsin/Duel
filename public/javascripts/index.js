@@ -14,8 +14,6 @@ $(document).ready(function() {
     $("#usernameInputForm").submit(function(e) {
         e.preventDefault();
         if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
-
-        return false;
     });
 
     $("#joinRoomViewButton").click(function() {
@@ -31,20 +29,21 @@ $(document).ready(function() {
         location.reload();
     });
 
-    $("#roomJoinSubmitButton").click(function() {
+    $("#roomJoinForm").submit(function(e) {
+        e.preventDefault();
         if ($("#roomJoinIdInput").val() == "") {
             alert("no id input")
         } else {
             inputRoomId = $("#roomJoinIdInput").val();
             socket.emit("attemptRoomJoin", username, inputRoomId);
         }
+
     });
 
     $("#chatMessageForm").submit(function(e) {
         e.preventDefault();
         socket.emit("chatMessage", $("#chatMessageInput").val(), username, currentRoomId)
         $("#chatMessageInput").val("");
-        return false;
     });
 
     $("#startGameButton").click(function() {

@@ -10,15 +10,14 @@ html
             form#usernameInputForm
                 input(type="text", name="usernameInput")#usernameInput
                 button(type="submit")#usernameSetButton Set
-            br
             button#joinRoomViewButton Join Room
             button#createRoomViewButton Create Room
         .view.hidden#joinRoomView
             h1 Join Room
-            #roomJoinForm
+            form#roomJoinForm
                 label(for="roomJoinIdInput") Room ID:
                 input(type="text", name="roomJoinIdInput", placeholder="nasty-goat-72")#roomJoinIdInput
-                button#roomJoinSubmitButton Join Room
+                button(type="submit")#roomJoinSubmitButton Join Room
         .view.hidden#lobbyRoomView
             h1 ID:
                 span#roomIdDisplay
