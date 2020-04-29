@@ -4,6 +4,7 @@ const hri = require("human-readable-ids").hri; // Code own version?
 exports.socketServer = function(app, server) {
     var io = socketio.listen(server);
     io.on("connection", function(socket) {
+        socket.emit("serverMessage", "Welcome to duel.wtf!");
         socket.on("createRoom", function(username) {
             var roomId = hri.random();
             socket.join(roomId);

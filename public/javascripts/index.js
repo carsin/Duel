@@ -97,17 +97,28 @@ socket.on("serverMessage", function(message) {
     $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
 });
 
-socket.on("loadGame", function(gameToLoad) {
-    var selectedGame = String(gameToLoad);
+socket.on("loadGame", function(selectedGame) {
     $("#lobbyRoomView").addClass("hidden");
     $("#gameViewContainer").removeClass("hidden");
     console.log(selectedGame + " loaded");
 
-    if (selectedGame === "cpsGame") {
-        $("#cpsGameView").removeClass("hidden");
-    } else if (selectedGame === "rngGame") {
-        $("#rngGameView").removeClass("hidden");
-    } else {
-        console.log("couldn't find game " + selectedGame);
+    switch(selectedGame) {
+        case "cpsGame": runCpsGame(); break;
+        case "rngGame": $("#rngGameView").removeClass("hidden"); break;
+        default: console.log("couldn't find game " + selectedGame);
     }
 });
+
+//
+// ────────────────────────────────────────────────── I ──────────
+//   :::::: G A M E S : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────
+//
+
+//
+// ─── CPS GAME ───────────────────────────────────────────────────────────────────
+//
+
+function runCpsGame() {
+    $("#cpsGameView").removeClass("hidden");
+}
