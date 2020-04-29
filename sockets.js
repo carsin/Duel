@@ -84,11 +84,11 @@ exports.socketServer = function(app, server) {
     var playerReady = function(socket, roomId) {
         if (!(socket.playersReady.includes(socket.username))) {
             socket.playersReady.push(socket.username);
-            io.emit("serverMessage", socket.username + " is ready. " + socket.playersReady.length + "/" + io.sockets.adapter.rooms[roomId].usernames.length);
+            io.to(roomId).emit("serverMessage", socket.username + " is ready. " + socket.playersReady.length + "/" + io.sockets.adapter.rooms[roomId].usernames.length);
         } else {
             var index = socket.playersReady.indexOf(socket.username);
             if (index !== -1) socket.playersReady.splice(index, 1);
-            io.emit("serverMessage", socket.username + " is no longer ready. " + socket.playersReady.length + "/" + io.sockets.adapter.rooms[roomId].usernames.length);
+            io.to(roomId).emit("serverMessage", socket.username + " is no longer ready. " + socket.playersReady.length + "/" + io.sockets.adapter.rooms[roomId].usernames.length);
         }
     }
 }
