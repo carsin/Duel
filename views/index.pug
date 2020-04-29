@@ -6,8 +6,10 @@ html
     body
         .view#mainView
             h1 Duel.wtf
-            label(for="usernameInput") Username:
-            input(type="text", name="usernameInput", placeholder="Default")#usernameInput
+            form#usernameInputForm
+                label(for="usernameInput") Username:
+                input(type="text", name="usernameInput", placeholder="Default")#usernameInput
+                button(type="submit")#usernameSetButton Set
             br
             button#joinRoomViewButton Join Room
             button#createRoomViewButton Create Room

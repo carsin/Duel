@@ -5,6 +5,7 @@ exports.socketServer = function(app, server) {
     var io = socketio.listen(server);
     io.on("connection", function(socket) {
         socket.emit("serverMessage", "Welcome to duel.wtf!");
+        socket.join("global");
         socket.on("createRoom", function(username) {
             var roomId = hri.random();
             socket.join(roomId);
@@ -33,7 +34,7 @@ exports.socketServer = function(app, server) {
 
                 io.to(roomId).emit("updatePlayerList", room.usernames);
                 io.to(roomId).emit("serverMessage", "Host " + socket.username + " disconnected. The game cannot be started.");
-                console.log(socket.username + "(host) disconnected from room " + roomId);
+                console.log(socket.username + " (host) disconnected from room " + roomId + ", closing it.");
             });
             console.log("user " + socket.username + " created room with id " + roomId);
         });
@@ -78,6 +79,7 @@ exports.socketServer = function(app, server) {
 
        socket.on("chatMessage", function(message, username, roomId) {
            io.to(roomId).emit("chatMessage", message, username);
+           console.log("(" + roomId + ") " + username + ": " + message);
        });
     });
 

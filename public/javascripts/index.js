@@ -1,7 +1,7 @@
 var socket = io();
-var username = String(Math.round(Math.random() * 100000));
+var username = "XD" + String(Math.round(Math.random() * 100));
 var inputRoomId;
-var currentRoomId = "";
+var currentRoomId = "global";
 var currentReadyButtonClicked;
 
 function getUsername() {
