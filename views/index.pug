@@ -33,18 +33,18 @@ html
             #players
                 h3 Player List:
                 ul#playerList
-            #chatbox
-                #messageWrapper
-                    ul#chatMessages
-                form(action="")#chatMessageForm
-                    input(type="text", placeholder="Type here")#chatMessageInput
-                    button#sendChat Send
+
         .view.hidden#gameViewContainer
             .gameView.hidden#cpsGameView
                 h1 this is the cps game
             .gameView.hidden#rngGameView
                 h1 this is the rng game view
-        br
+        #chatbox
+            #messageWrapper
+                ul#chatMessages
+            form(action="")#chatMessageForm
+                input(type="text", placeholder="Type here")#chatMessageInput
+                button#sendChat Send
         button#mainViewButton Main Menu
 
         script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js")

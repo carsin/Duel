@@ -73,6 +73,5 @@ exports.socketServer = function(app, server) {
        socket.on("chatMessage", function(message, username, roomId) {
            io.to(roomId).emit("chatMessage", message, username);
        });
-
     });
 }
