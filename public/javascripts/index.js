@@ -97,6 +97,17 @@ socket.on("serverMessage", function(message) {
     $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
 });
 
-socket.on("loadGame", function(selectedGame) {
+socket.on("loadGame", function(gameToLoad) {
+    var selectedGame = String(gameToLoad);
+    $("#lobbyRoomView").addClass("hidden");
+    $("#gameViewContainer").removeClass("hidden");
+    console.log(selectedGame + " loaded");
 
+    if (selectedGame === "cpsGameView") {
+        $("#cpsGameView").removeClass("hidden");
+    } else if (selectedGame === "rngGameView") {
+        $("#rngGameView").removeClass("hidden");
+    } else {
+        console.log("couldn't find game " + selectedGame);
+    }
 });
