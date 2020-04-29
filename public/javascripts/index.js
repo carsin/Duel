@@ -86,7 +86,7 @@ $(document).ready(function() {
 
 socket.on("confirmRoomCreation", function(roomId) {
     currentRoomId = roomId;
-    $("#roomIdDisplay").html(roomId);
+    $("#roomIdDisplay").html(" " + roomId);
     $("#mainView").addClass("hidden");
     $("#gameCreateForm").removeClass("hidden");
     $("#lobbyRoomView").removeClass("hidden");
@@ -98,7 +98,7 @@ socket.on("roomJoinFail", function() {
 
 socket.on("roomJoinSuccess", function(room, roomId) {
     currentRoomId = roomId;
-    $("#roomIdDisplay").html(roomId);
+    $("#roomIdDisplay").html(" " + roomId);
     $("#joinRoomView").addClass("hidden");
     $("#lobbyRoomView").removeClass("hidden");
 });

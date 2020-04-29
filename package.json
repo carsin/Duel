@@ -1,7 +1,7 @@
 {
     "name": "duel",
     "version": "1.0.0",
-    "description": "NAMES:\r * FIGHTMEIRL\r * FIGHTATLAN\r * FIGHTONLINE\r * FIGHTMEBRO\r * WILDWEST\r * STANDOFFS",
+    "description": "",
     "main": "app.js",
     "scripts": {
         "start": "node ./bin/www",
@@ -20,9 +20,9 @@
     "dependencies": {
         "body-parser": "^1.19.0",
         "express": "^4.17.1",
-        "human-readable-ids": "^1.0.4",
         "morgan": "^1.10.0",
         "pug": "^2.0.4",
         "socket.io": "^2.3.0"
-    }
+    },
+    "devDependencies": {}
 }
