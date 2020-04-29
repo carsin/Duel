@@ -6,7 +6,7 @@ const http = require("http");
 var app = express();
 var server = http.createServer(app);
 
-app.use(logger("dev"));
+// app.use(logger("dev"));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");

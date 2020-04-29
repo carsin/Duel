@@ -17,6 +17,11 @@ exports.socketServer = function(app, server) {
             io.to(roomId).emit("updatePlayerList", room.usernames);
             io.to(roomId).emit("serverMessage", socket.username + " connected.");
 
+            socket.on("gameStarted", function(selectedGame) {
+                console.log(socket.username + " started game " + selectedGame + " in room " + roomId);
+                io.to(roomId).emit("loadGame", selectedGame);
+            });
+
             socket.on("disconnect", function() {
                 var index = room.usernames.indexOf(socket.username);
                 if (index !== -1) room.usernames.splice(index, 1);
@@ -25,7 +30,7 @@ exports.socketServer = function(app, server) {
                 io.to(roomId).emit("serverMessage", "Host " + socket.username + " disconnected. The game cannot be started.");
                 console.log(socket.username + "(host) disconnected from room " + roomId);
             });
-            console.log("user created room with id " + roomId)
+            console.log("user " + socket.username + " created room with id " + roomId);
         });
 
         socket.on("attemptRoomJoin", function(username, roomId) {

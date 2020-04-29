@@ -27,11 +27,36 @@ h1, h3, p {
     display: none;
 }
 
-#chatbox {
-    display: inline-block;
+#mainViewButton {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+#players {
+    position: absolute;
+    top: 80vh;
     height: 20vh;
-    width: 25vw;
     border: 1px solid black;
+    left: 20vw;
+    padding: 5px;
+}
+
+#chatbox {
+    position: absolute;
+    padding: 5px;
+    border: 1px solid black;
+    border-right: none;
+    bottom: 0;
+    height: 20vh;
+    width: 20vw;
+    left: 0;
+}
+
+#chatMessageForm {
+    display: inline-block;
+    height: 10%;
+    width: 100%;
 }
 
 #chatMessages {
@@ -43,8 +68,8 @@ h1, h3, p {
     overflow-y: auto;
     display: flex;
     flex-direction: column-reverse;
-    height: 100%;
     margin: 0;
+    height: 90%;
     padding: 0;
 }
 

@@ -29,7 +29,7 @@ $("#createRoomViewButton").click(function() {
     socket.emit("createRoom", username);
 });
 
-$(".mainViewButton").click(function() {
+$("#mainViewButton").click(function() {
     location.reload();
 });
 
@@ -47,6 +47,12 @@ $("#chatMessageForm").submit(function(e) {
     socket.emit("chatMessage", $("#chatMessageInput").val(), username, currentRoomId)
     $("#chatMessageInput").val("");
     return false;
+});
+
+$("#startGameButton").click(function() {
+    var selectedGame = $("input[name=selectedGame]:checked", "#gameCreateForm").val()
+    socket.emit("gameStarted", selectedGame);
+    console.log(selectedGame + " game started");
 });
 
 //
@@ -89,4 +95,8 @@ socket.on("chatMessage", function(message, username) {
 
 socket.on("serverMessage", function(message) {
     $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
+});
+
+socket.on("loadGame", function(selectedGame) {
+
 });
