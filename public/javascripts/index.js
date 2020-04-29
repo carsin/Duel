@@ -4,23 +4,27 @@ var inputRoomId;
 var currentRoomId = "global";
 var currentReadyButtonClicked;
 
-function getUsername() {
-    if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
-    return username;
-}
-
 //
 // ─── JQUERY HANDLERS ────────────────────────────────────────────────────────────
 //
 
+$(document).ready(function() {
+    $("#usernameInput").val(username);
+});
+
+$("#usernameInputForm").submit(function(e) {
+    e.preventDefault();
+    if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
+
+    return false;
+});
+
 $("#joinRoomViewButton").click(function() {
-    getUsername();
     $("#mainView").addClass("hidden");
     $("#joinRoomView").removeClass("hidden");
 });
 
 $("#createRoomViewButton").click(function() {
-    getUsername();
     socket.emit("createRoom", username);
 });
 
