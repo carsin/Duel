@@ -55,6 +55,17 @@ $("#startGameButton").click(function() {
     console.log(selectedGame + " game started");
 });
 
+$(".readyButton").click(function() {
+    var buttonClicked = $(this);
+    socket.emit("ready");
+
+    if (buttonClicked.html() == "Ready") {
+        $(buttonClicked).html("Unready");
+    } else if (buttonClicked.html() == "Unready") {
+        $(buttonClicked).html("Ready");
+    }
+});
+
 //
 // ─── SOCKET HANDLERS ────────────────────────────────────────────────────────────
 //

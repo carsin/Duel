@@ -20,6 +20,10 @@ exports.socketServer = function(app, server) {
 
             socket.on("gameStarted", function(selectedGame) {
                 console.log(socket.username + " started game " + selectedGame + " in room " + roomId);
+
+                socket.playersReady = [];
+                socket.on("ready", function() { playerReady(socket, roomId)});
+
                 io.to(roomId).emit("loadGame", selectedGame);
             });
 
@@ -52,6 +56,7 @@ exports.socketServer = function(app, server) {
 
                         console.log(username + " joined room " + roomId);
 
+                        socket.on("ready", function() { playerReady(socket, roomId)});
                         socket.on("disconnect", function() {
                             var index = room.usernames.indexOf(socket.username);
                             if (index !== -1) room.usernames.splice(index, 1);
@@ -75,4 +80,15 @@ exports.socketServer = function(app, server) {
            io.to(roomId).emit("chatMessage", message, username);
        });
     });
+
+    var playerReady = function(socket, roomId) {
+        if (!(socket.playersReady.includes(socket.username))) {
+            socket.playersReady.push(socket.username);
+            io.emit("serverMessage", socket.username + " is ready. " + socket.playersReady.length + "/" + io.sockets.adapter.rooms[roomId].usernames.length);
+        } else {
+            var index = socket.playersReady.indexOf(socket.username);
+            if (index !== -1) socket.playersReady.splice(index, 1);
+            io.emit("serverMessage", socket.username + " is no longer ready. " + socket.playersReady.length + "/" + io.sockets.adapter.rooms[roomId].usernames.length);
+        }
+    }
 }
