@@ -1,13 +1,8 @@
-//
-// ────────────────────────────────────────────────────────────────────────────────────-─────────
-//   :::::: C L I E N T - S I D E   J A V A S C R I P T : :  :   :    :     :        :          :
-// ──────────────────────────────────────────────────────────────────────────────────────────────
-//
-
 var socket = io();
-var username = "Default";
+var username = String(Math.round(Math.random() * 100000));
 var inputRoomId;
 var currentRoomId = "";
+var currentReadyButtonClicked;
 
 function getUsername() {
     if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
@@ -56,13 +51,13 @@ $("#startGameButton").click(function() {
 });
 
 $(".readyButton").click(function() {
-    var buttonClicked = $(this);
+    if (currentReadyButtonClicked != $(this)) currentReadyButtonClicked = $(this);
     socket.emit("ready");
 
-    if (buttonClicked.html() == "Ready") {
-        $(buttonClicked).html("Unready");
-    } else if (buttonClicked.html() == "Unready") {
-        $(buttonClicked).html("Ready");
+    if (currentReadyButtonClicked.html() == "Ready") {
+        $(currentReadyButtonClicked).html("Unready");
+    } else if (currentReadyButtonClicked.html() == "Unready") {
+        $(currentReadyButtonClicked).html("Ready");
     }
 });
 
@@ -120,8 +115,12 @@ socket.on("loadGame", function(selectedGame) {
     }
 });
 
+socket.on("allPlayersReady", function() {
+    currentReadyButtonClicked.attr("disabled", true);
+});
+
 //
-// ────────────────────────────────────────────────── I ──────────
+// ────────────────────────────────────────────────────────────
 //   :::::: G A M E S : :  :   :    :     :        :          :
 // ────────────────────────────────────────────────────────────
 //

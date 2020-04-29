@@ -21,7 +21,7 @@ exports.socketServer = function(app, server) {
             socket.on("gameStarted", function(selectedGame) {
                 console.log(socket.username + " started game " + selectedGame + " in room " + roomId);
 
-                socket.playersReady = [];
+                room.playersReady = [];
                 socket.on("ready", function() { playerReady(socket, roomId)});
 
                 io.to(roomId).emit("loadGame", selectedGame);
@@ -82,13 +82,19 @@ exports.socketServer = function(app, server) {
     });
 
     var playerReady = function(socket, roomId) {
-        if (!(socket.playersReady.includes(socket.username))) {
-            socket.playersReady.push(socket.username);
-            io.to(roomId).emit("serverMessage", socket.username + " is ready. " + socket.playersReady.length + "/" + io.sockets.adapter.rooms[roomId].usernames.length);
+        var room = io.sockets.adapter.rooms[roomId];
+        if (!(room.playersReady.includes(socket.username))) {
+            room.playersReady.push(socket.username);
+            io.to(roomId).emit("serverMessage", socket.username + " is ready. " + room.playersReady.length + "/" + room.usernames.length);
         } else {
-            var index = socket.playersReady.indexOf(socket.username);
-            if (index !== -1) socket.playersReady.splice(index, 1);
-            io.to(roomId).emit("serverMessage", socket.username + " is no longer ready. " + socket.playersReady.length + "/" + io.sockets.adapter.rooms[roomId].usernames.length);
+            var index = room.playersReady.indexOf(socket.username);
+            if (index !== -1) room.playersReady.splice(index, 1);
+            io.to(roomId).emit("serverMessage", socket.username + " is no longer ready. " + room.playersReady.length + "/" + room.usernames.length);
+        }
+
+        if (room.playersReady.length == room.length) {
+            io.to(roomId).emit("serverMessage", "All players ready.");
+            io.to(roomId).emit("allPlayersReady");
         }
     }
 }
