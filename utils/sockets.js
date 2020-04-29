@@ -1,9 +1,11 @@
 const socketio = require("socket.io");
 const hri = require("human-readable-ids").hri; // Code own version?
+const idgen = require("./IDGenerator");
 
 exports.socketServer = function(app, server) {
     var io = socketio.listen(server);
     io.on("connection", function(socket) {
+        idgen.generateRandomId();
         socket.emit("serverMessage", "Welcome to duel.wtf!");
         socket.join("global");
         socket.on("createRoom", function(username) {
