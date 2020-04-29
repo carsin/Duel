@@ -10,60 +10,62 @@ var currentReadyButtonClicked;
 
 $(document).ready(function() {
     $("#usernameInput").val(username);
+
+    $("#usernameInputForm").submit(function(e) {
+        e.preventDefault();
+        if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
+
+        return false;
+    });
+
+    $("#joinRoomViewButton").click(function() {
+        $("#mainView").addClass("hidden");
+        $("#joinRoomView").removeClass("hidden");
+    });
+
+    $("#createRoomViewButton").click(function() {
+        socket.emit("createRoom", username);
+    });
+
+    $("#mainViewButton").click(function() {
+        location.reload();
+    });
+
+    $("#roomJoinSubmitButton").click(function() {
+        if ($("#roomJoinIdInput").val() == "") {
+            alert("no id input")
+        } else {
+            inputRoomId = $("#roomJoinIdInput").val();
+            socket.emit("attemptRoomJoin", username, inputRoomId);
+        }
+    });
+
+    $("#chatMessageForm").submit(function(e) {
+        e.preventDefault();
+        socket.emit("chatMessage", $("#chatMessageInput").val(), username, currentRoomId)
+        $("#chatMessageInput").val("");
+        return false;
+    });
+
+    $("#startGameButton").click(function() {
+        var selectedGame = $("input[name=selectedGame]:checked", "#gameCreateForm").val()
+        socket.emit("gameStarted", selectedGame);
+        console.log(selectedGame + " game started");
+    });
+
+    $(".readyButton").click(function() {
+        if (currentReadyButtonClicked != $(this)) currentReadyButtonClicked = $(this);
+        socket.emit("ready");
+
+        if (currentReadyButtonClicked.html() == "Ready") {
+            $(currentReadyButtonClicked).html("Unready");
+        } else if (currentReadyButtonClicked.html() == "Unready") {
+            $(currentReadyButtonClicked).html("Ready");
+        }
+    });
 });
 
-$("#usernameInputForm").submit(function(e) {
-    e.preventDefault();
-    if ($("#usernameInput").val() != "") username = $("#usernameInput").val();
 
-    return false;
-});
-
-$("#joinRoomViewButton").click(function() {
-    $("#mainView").addClass("hidden");
-    $("#joinRoomView").removeClass("hidden");
-});
-
-$("#createRoomViewButton").click(function() {
-    socket.emit("createRoom", username);
-});
-
-$("#mainViewButton").click(function() {
-    location.reload();
-});
-
-$("#roomJoinSubmitButton").click(function() {
-    if ($("#roomJoinIdInput").val() == "") {
-        alert("no id input")
-    } else {
-        inputRoomId = $("#roomJoinIdInput").val();
-        socket.emit("attemptRoomJoin", username, inputRoomId);
-    }
-});
-
-$("#chatMessageForm").submit(function(e) {
-    e.preventDefault();
-    socket.emit("chatMessage", $("#chatMessageInput").val(), username, currentRoomId)
-    $("#chatMessageInput").val("");
-    return false;
-});
-
-$("#startGameButton").click(function() {
-    var selectedGame = $("input[name=selectedGame]:checked", "#gameCreateForm").val()
-    socket.emit("gameStarted", selectedGame);
-    console.log(selectedGame + " game started");
-});
-
-$(".readyButton").click(function() {
-    if (currentReadyButtonClicked != $(this)) currentReadyButtonClicked = $(this);
-    socket.emit("ready");
-
-    if (currentReadyButtonClicked.html() == "Ready") {
-        $(currentReadyButtonClicked).html("Unready");
-    } else if (currentReadyButtonClicked.html() == "Unready") {
-        $(currentReadyButtonClicked).html("Ready");
-    }
-});
 
 //
 // ─── SOCKET HANDLERS ────────────────────────────────────────────────────────────
