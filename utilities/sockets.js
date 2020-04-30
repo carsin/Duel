@@ -1,14 +1,13 @@
 const socketio = require("socket.io");
-const idgen = require("./IDGenerator");
+const idGen = require("./IDGenerator");
 
 exports.socketServer = function(app, server) {
     var io = socketio.listen(server);
     io.on("connection", function(socket) {
-        idgen.generateRandomId();
         socket.emit("serverMessage", "Welcome to duel.wtf!");
         socket.join("global");
         socket.on("createRoom", function(username) {
-            var roomId = idgen.generateRandomId();
+            var roomId = idGen.generateRandomId();
             socket.join(roomId);
 
             var room = io.sockets.adapter.rooms[roomId];

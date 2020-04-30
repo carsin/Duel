@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Set up sockets
-const sockets = require("./utils/sockets");
+const sockets = require("./utilities/sockets");
 sockets.socketServer(app, server);
 
 // Set up route
