@@ -147,7 +147,7 @@ socket.on("loadGame", function(selectedGame) {
     }
 });
 
-socket.on("allPlayersReady", function() {
+socket.on("allPlayersReady", function(game) {
     currentReadyButtonClicked.attr("disabled", true);
 
     // Ready countdown
@@ -156,9 +156,17 @@ socket.on("allPlayersReady", function() {
     var countdownTimer = setInterval(function() {
         if (countdownCount <= 0) {
             clearInterval(countdownTimer);
-            $("#cpsGameReadyView").addClass("hidden");
-            $("#cpsGame").removeClass("hidden");
-            runCpsGame();
+            switch(game) {
+                case "cpsGame":
+                    $("#cpsGameReadyView").addClass("hidden");
+                    $("#cpsGame").removeClass("hidden");
+                    runCpsGame();
+                    break;
+                case "rngGame":
+                    $("#rngGameReadyView").addClass("hidden");
+                    $("#rngGame").removeClass("hidden");
+                    break;
+            }
             return;
         }
 

@@ -14,6 +14,7 @@ exports.socketServer = function(app, server) {
 
             socket.username = username;
             room.usernames = [username];
+            room.selectedGame;
 
             socket.emit("confirmRoomCreation", roomId);
             io.to(roomId).emit("updatePlayerList", room.usernames);
@@ -21,6 +22,7 @@ exports.socketServer = function(app, server) {
 
             socket.on("gameStarted", function(selectedGame) {
                 console.log(socket.username + " started game " + selectedGame + " in room " + roomId);
+                room.selectedGame = selectedGame;
 
                 room.playersReady = [];
                 socket.on("ready", function() { playerReady(socket, roomId)});
@@ -97,7 +99,7 @@ exports.socketServer = function(app, server) {
 
         if (room.playersReady.length == room.length) {
             io.to(roomId).emit("serverMessage", "All players ready.");
-            io.to(roomId).emit("allPlayersReady");
+            io.to(roomId).emit("allPlayersReady", room.selectedGame);
         }
     }
 }
