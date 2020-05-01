@@ -143,9 +143,8 @@ $(document).ready(function() {
 
     socket.on("allPlayersReady", function(game) {
         currentReadyButtonClicked.attr("disabled", true);
-
         // Ready countdown
-        countdownCount = 5;
+        countdownCount = 3;
         $("#" + game + "ReadyCountdown").html(countdownCount);
         var countdownTimer = setInterval(function() {
             if (countdownCount <= 0) {
@@ -156,6 +155,7 @@ $(document).ready(function() {
                 switch(game) {
                     case "cpsGame": runCpsGame(); break;
                     case "rngGame": runRngGame(); break;
+                    default: console.log("Couldn't run game " + game); break;
                 }
 
                 return;
@@ -165,6 +165,7 @@ $(document).ready(function() {
             $("#" + game + "ReadyCountdown").html(countdownCount);
         }, 1000)
     });
+
     //
     // ────────────────────────────────────────────────────────────
     //   :::::: G A M E S : :  :   :    :     :        :          :
@@ -176,6 +177,26 @@ $(document).ready(function() {
     //
 
     function runCpsGame() {
+        seconds = 10;
+        clock = 0;
+        updateInterval = 30;
+        clickCount = 0;
+
+        timer = setInterval(function() {
+                clock++;
+                realClock = (clock/(1000/updateInterval));
+                displayClock = realClock.toFixed(2);
+                $("#cpsGameTimerDisplay").html(displayClock);
+                if (realClock >= seconds) {
+                    clearInterval(timer);
+                    console.log("CPS: " + (clickCount/seconds).toFixed(2))
+                    return;
+                }
+        }, updateInterval);
+
+        $("#cpsGameClickButton").click(function() {
+            clickCount++;
+        });
 
     }
 
