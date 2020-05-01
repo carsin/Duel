@@ -6,12 +6,15 @@ exports.socketServer = function(app, server) {
     io.on("connection", function(socket) {
         socket.emit("serverMessage", "Welcome to duel.wtf!");
         socket.join("global");
+        socket.currentRoom = "global";
         socket.username = "XD" + String(Math.round(Math.random() * 1000));
         socket.emit("changeUsername", socket.username);
 
         socket.on("createRoom", function() {
             var roomId = idGen.generateRandomId();
             socket.join(roomId);
+            socket.leave("global");
+            socket.currentRoom = roomId;
 
             var room = io.sockets.adapter.rooms[roomId];
 
@@ -32,6 +35,7 @@ exports.socketServer = function(app, server) {
             });
 
             socket.on("disconnect", function() {
+                // Remove user from username list
                 var index = room.usernames.indexOf(socket.username);
                 if (index !== -1) room.usernames.splice(index, 1);
 
@@ -49,6 +53,8 @@ exports.socketServer = function(app, server) {
                 if (room.length >= 1) {
                     if (!(room.usernames.includes(socket.username))) {
                         socket.join(roomId);
+                        socket.leave("global");
+                        socket.currentRoom = roomId;
 
                         room.usernames.push(socket.username);
 
@@ -79,13 +85,13 @@ exports.socketServer = function(app, server) {
             }
        });
 
-       socket.on("chatMessage", function(message, roomId) {
+       socket.on("chatMessage", function(message) {
             // Prevent html injection
            message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-           message = message.subString(0, 200);
+           message = message.substring(0, 200);
 
-           io.to(roomId).emit("chatMessage", message, socket.username);
-           console.log("(" + roomId + ") " + socket.username + ": " + message);
+           io.to(socket.currentRoom).emit("chatMessage", message, socket.username);
+           console.log("(" + socket.currentRoom + ") " + socket.username + ": " + message);
        });
 
        socket.on("setUsername", function(username) {

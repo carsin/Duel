@@ -1,6 +1,5 @@
 $(document).ready(function() {
     var inputRoomId;
-    var currentRoomId = "global";
     var currentReadyButtonClicked;
     // Connect to server
     var socket = io();
@@ -52,7 +51,7 @@ $(document).ready(function() {
 
         if (message.trim() != "") {
             if (message.length < 200) {
-                socket.emit("chatMessage", message, currentRoomId)
+                socket.emit("chatMessage", message)
             } else {
                 $("#chatMessages").append("<li class='serverMessage'>Your message is greater than 200 characters!</li>");
             }
