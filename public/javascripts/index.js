@@ -134,16 +134,12 @@ socket.on("loadGame", function(selectedGame) {
     $("#gameViewContainer").removeClass("hidden");
     console.log(selectedGame + " loading");
 
-    switch(selectedGame) {
-        case "cpsGame":
-            $("#cpsGameView").removeClass("hidden");
-            $("#cpsGameReadyView").removeClass("hidden");
-            break;
-        case "rngGame":
-            $("#rngGameView").removeClass("hidden");
-            $("#rngGameReadyView").removeClass("hidden");
-            break;
-        default: console.log("couldn't find game " + selectedGame);
+    try {
+        $("#" + selectedGame + "View").removeClass("hidden");
+        console.log($("#" + selectedGame + "GameView"));
+        $("#" + selectedGame + "ReadyView").removeClass("hidden");
+    } catch(e) {
+        console.log("couldn't find game " + selectedGame);
     }
 });
 
@@ -152,26 +148,23 @@ socket.on("allPlayersReady", function(game) {
 
     // Ready countdown
     countdownCount = 5;
-    $("#cpsGameReadyCountdown").html(countdownCount);
+    $("#" + game + "ReadyCountdown").html(countdownCount);
     var countdownTimer = setInterval(function() {
         if (countdownCount <= 0) {
             clearInterval(countdownTimer);
+            $("#" + game + "ReadyView").addClass("hidden");
+            $("#" + game).removeClass("hidden");
+
             switch(game) {
-                case "cpsGame":
-                    $("#cpsGameReadyView").addClass("hidden");
-                    $("#cpsGame").removeClass("hidden");
-                    runCpsGame();
-                    break;
-                case "rngGame":
-                    $("#rngGameReadyView").addClass("hidden");
-                    $("#rngGame").removeClass("hidden");
-                    break;
+                case "cpsGame": runCpsGame(); break;
+                case "rngGame": runRngGame(); break;
             }
+
             return;
         }
 
         countdownCount--;
-        $("#cpsGameReadyCountdown").html(countdownCount);
+        $("#" + game + "ReadyCountdown").html(countdownCount);
     }, 1000)
 });
 
@@ -186,4 +179,14 @@ socket.on("allPlayersReady", function(game) {
 //
 
 function runCpsGame() {
+
 }
+
+//
+// ─── CPS GAME ───────────────────────────────────────────────────────────────────
+//
+
+function runRngGame() {
+
+}
+
