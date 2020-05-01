@@ -89,7 +89,7 @@ exports.socketServer = function(app, server) {
             if (username.trim() != "" && username.length <= 16) {
                 socket.username = username;
             } else {
-                socket.to(socket).emit("Username is empty or more than 16 characters");
+                socket.to(socket).emit("serverMessage", "Username is empty or more than 16 characters");
 
             }
        });
