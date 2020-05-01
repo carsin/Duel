@@ -1,13 +1,14 @@
-var inputRoomId;
-var currentRoomId = "global";
-var currentReadyButtonClicked;
-var socket = io();
-
-//
-// ─── JQUERY HANDLERS ────────────────────────────────────────────────────────────
-//
-
 $(document).ready(function() {
+    var inputRoomId;
+    var currentRoomId = "global";
+    var currentReadyButtonClicked;
+    // Connect to server
+    var socket = io();
+
+    //
+    // ─── JQUERY HANDLERS ────────────────────────────────────────────────────────────
+    //
+
     $("#usernameInputForm").submit(function(e) {
         e.preventDefault();
         username = $("#usernameInput").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -79,115 +80,111 @@ $(document).ready(function() {
             $(currentReadyButtonClicked).html("Ready");
         }
     });
-});
 
+    //
+    // ─── SOCKET HANDLERS ────────────────────────────────────────────────────────────
+    //
 
+    socket.on("confirmRoomCreation", function(roomId) {
+        currentRoomId = roomId;
+        $("#roomIdDisplay").html(" " + roomId);
+        $("#mainView").addClass("hidden");
+        $("#gameCreateForm").removeClass("hidden");
+        $("#lobbyRoomView").removeClass("hidden");
+    });
 
-//
-// ─── SOCKET HANDLERS ────────────────────────────────────────────────────────────
-//
+    socket.on("roomJoinFail", function() {
+        alert("Failed joining room " + inputRoomId);
+    });
 
-socket.on("confirmRoomCreation", function(roomId) {
-    currentRoomId = roomId;
-    $("#roomIdDisplay").html(" " + roomId);
-    $("#mainView").addClass("hidden");
-    $("#gameCreateForm").removeClass("hidden");
-    $("#lobbyRoomView").removeClass("hidden");
-});
+    socket.on("roomJoinSuccess", function(room, roomId) {
+        currentRoomId = roomId;
+        $("#roomIdDisplay").html(" " + roomId);
+        $("#joinRoomView").addClass("hidden");
+        $("#lobbyRoomView").removeClass("hidden");
+    });
 
-socket.on("roomJoinFail", function() {
-    alert("Failed joining room " + inputRoomId);
-});
-
-socket.on("roomJoinSuccess", function(room, roomId) {
-    currentRoomId = roomId;
-    $("#roomIdDisplay").html(" " + roomId);
-    $("#joinRoomView").addClass("hidden");
-    $("#lobbyRoomView").removeClass("hidden");
-});
-
-socket.on("updatePlayerList", function(usernames) {
-    $("#playerList").html("");
-    for (var i = 0; i < usernames.length; i++) {
-        if (i == 0) {
-            $("#playerList").append("<li>" + usernames[i] + " (host) </li>");
-        } else {
-            $("#playerList").append("<li>" + usernames[i] + "</li>");
+    socket.on("updatePlayerList", function(usernames) {
+        $("#playerList").html("");
+        for (var i = 0; i < usernames.length; i++) {
+            if (i == 0) {
+                $("#playerList").append("<li>" + usernames[i] + " (host) </li>");
+            } else {
+                $("#playerList").append("<li>" + usernames[i] + "</li>");
+            }
         }
-    }
-});
+    });
 
-socket.on("chatMessage", function(message, username) {
-    $("#chatMessages").append("<li>" + username + ": " +  message + "</li>");
-});
+    socket.on("chatMessage", function(message, username) {
+        $("#chatMessages").append("<li>" + username + ": " +  message + "</li>");
+    });
 
-socket.on("serverMessage", function(message) {
-    $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
-});
+    socket.on("serverMessage", function(message) {
+        $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
+    });
 
-socket.on("changeUsername", function(username) {
-    $("#usernameDisplay").html(" " + username)
-    $("#usernameInput").val("");
-    $("#chatMessages").append("<li class='serverMessage'>Username set to " + username + "</li>");
-});
+    socket.on("changeUsername", function(username) {
+        $("#usernameDisplay").html(" " + username)
+        $("#usernameInput").val("");
+        $("#chatMessages").append("<li class='serverMessage'>Username set to " + username + "</li>");
+    });
 
-socket.on("loadGame", function(selectedGame) {
-    $("#lobbyRoomView").addClass("hidden");
-    $("#gameViewContainer").removeClass("hidden");
-    console.log(selectedGame + " loading");
+    socket.on("loadGame", function(selectedGame) {
+        $("#lobbyRoomView").addClass("hidden");
+        $("#gameViewContainer").removeClass("hidden");
+        console.log(selectedGame + " loading");
 
-    try {
-        $("#" + selectedGame + "View").removeClass("hidden");
-        $("#" + selectedGame + "ReadyView").removeClass("hidden");
-    } catch(e) {
-        console.log("couldn't find game " + selectedGame);
-    }
-});
+        try {
+            $("#" + selectedGame + "View").removeClass("hidden");
+            $("#" + selectedGame + "ReadyView").removeClass("hidden");
+        } catch(e) {
+            console.log("couldn't find game " + selectedGame);
+        }
+    });
 
-socket.on("allPlayersReady", function(game) {
-    currentReadyButtonClicked.attr("disabled", true);
+    socket.on("allPlayersReady", function(game) {
+        currentReadyButtonClicked.attr("disabled", true);
 
-    // Ready countdown
-    countdownCount = 5;
-    $("#" + game + "ReadyCountdown").html(countdownCount);
-    var countdownTimer = setInterval(function() {
-        if (countdownCount <= 0) {
-            clearInterval(countdownTimer);
-            $("#" + game + "ReadyView").addClass("hidden");
-            $("#" + game).removeClass("hidden");
+        // Ready countdown
+        countdownCount = 5;
+        $("#" + game + "ReadyCountdown").html(countdownCount);
+        var countdownTimer = setInterval(function() {
+            if (countdownCount <= 0) {
+                clearInterval(countdownTimer);
+                $("#" + game + "ReadyView").addClass("hidden");
+                $("#" + game).removeClass("hidden");
 
-            switch(game) {
-                case "cpsGame": runCpsGame(); break;
-                case "rngGame": runRngGame(); break;
+                switch(game) {
+                    case "cpsGame": runCpsGame(); break;
+                    case "rngGame": runRngGame(); break;
+                }
+
+                return;
             }
 
-            return;
-        }
+            countdownCount--;
+            $("#" + game + "ReadyCountdown").html(countdownCount);
+        }, 1000)
+    });
+    //
+    // ────────────────────────────────────────────────────────────
+    //   :::::: G A M E S : :  :   :    :     :        :          :
+    // ────────────────────────────────────────────────────────────
+    //
 
-        countdownCount--;
-        $("#" + game + "ReadyCountdown").html(countdownCount);
-    }, 1000)
+    //
+    // ─── CPS GAME ───────────────────────────────────────────────────────────────────
+    //
+
+    function runCpsGame() {
+
+    }
+
+    //
+    // ─── CPS GAME ───────────────────────────────────────────────────────────────────
+    //
+
+    function runRngGame() {
+
+    }
 });
-
-//
-// ────────────────────────────────────────────────────────────
-//   :::::: G A M E S : :  :   :    :     :        :          :
-// ────────────────────────────────────────────────────────────
-//
-
-//
-// ─── CPS GAME ───────────────────────────────────────────────────────────────────
-//
-
-function runCpsGame() {
-
-}
-
-//
-// ─── CPS GAME ───────────────────────────────────────────────────────────────────
-//
-
-function runRngGame() {
-
-}
-
