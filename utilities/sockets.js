@@ -19,8 +19,7 @@ exports.socketServer = function(app, server) {
 
             // Room Variables
             room.usernames = [socket.username];
-            room.cpsGameCompletedPlayers = [];
-            room.cpsGameScores = [];
+            room.cpsGameData = [];
 
             // Notify client
             socket.emit("confirmRoomCreation", socket.currentRoom);
@@ -30,9 +29,11 @@ exports.socketServer = function(app, server) {
             socket.on("gameStarted", function(selectedGame) {
                 console.log(socket.username + " started game " + selectedGame + " in room " + socket.currentRoom);
                 room.selectedGame = selectedGame;
-
                 room.playersReady = [];
+
+                // Set up shared listeners
                 socket.on("ready", function() { playerReady(socket)});
+                socket.on("cpsGameComplete", function(cpsScore) { cpsGame(socket, cpsScore)});
 
                 io.to(socket.currentRoom).emit("loadGame", selectedGame);
             });
@@ -67,7 +68,10 @@ exports.socketServer = function(app, server) {
 
                         console.log(socket.username + " joined room " + roomId);
 
+                        // Set up shared listeners
                         socket.on("ready", function() { playerReady(socket)});
+                        socket.on("cpsGameComplete", function(cpsScore) { cpsGame(socket, cpsScore)});
+
                         socket.on("disconnect", function() {
                             // Remove user from username list
                             let index = room.usernames.indexOf(socket.username);
@@ -127,13 +131,23 @@ exports.socketServer = function(app, server) {
 
     var cpsGame = function(socket, cpsCount) {
         let room = io.sockets.adapter.rooms[socket.currentRoom];
-        room.cpsGameCompletedPlayers.push(socket.username);
-        room.cpsGameScores.push(cpsCount)
+        room.cpsGameData.push({
+            username: socket.username,
+            cpsScore: cpsCount,
+        });
+
+        console.log(socket.username + " scored " + cpsCount + " CPS");
 
         // If all players have completed the game
-        if (room.usernames.length == room.cpsGameCompletedPlayers.length) {
+        if (room.usernames.length == room.cpsGameData.length) {
+            console.log(room.cpsGameData);
+            room.cpsGameData.sort(function(a, b) {
+                if (a.cpsScore < b.cpsScore) return 1;
+                if (a.cpsScore > b.cpsScore) return -1;
+                return 0;
+            });
 
+            console.log(room.cpsGameData);
         }
-
     }
 }
