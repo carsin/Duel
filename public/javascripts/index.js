@@ -179,17 +179,20 @@ $(document).ready(function() {
     function runCpsGame() {
         seconds = 10;
         clock = 0;
-        updateInterval = 30;
+        updateInterval = 10; // How often time is progressed
         clickCount = 0;
 
         timer = setInterval(function() {
                 clock++;
-                realClock = (clock/(1000/updateInterval));
-                displayClock = realClock.toFixed(2);
-                $("#cpsGameTimerDisplay").html(displayClock);
+                realClock = (clock / (1000 / updateInterval));
+                displayClock = Number((Math.round(realClock + "e+2") + "e-2"));
+                $("#cpsGameTimerDisplay").html(" " + displayClock);
+
+                // Check if time is up
                 if (realClock >= seconds) {
                     clearInterval(timer);
-                    console.log("CPS: " + (clickCount/seconds).toFixed(2))
+                    // $("#cpsGameTimerDisplay").html(seconds); // Sneakily fix the counter >:D
+                    console.log("CPS: " + (clickCount / seconds).toFixed(2))
                     return;
                 }
         }, updateInterval);
