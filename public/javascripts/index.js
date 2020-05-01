@@ -50,7 +50,12 @@ $(document).ready(function() {
         message = $("#chatMessageInput").val();
 
         if (message.trim() != "") {
-            socket.emit("chatMessage", message, currentRoomId)
+            if (message.length < 200) {
+                socket.emit("chatMessage", message, currentRoomId)
+            } else {
+                $("#chatMessages").append("<li class='serverMessage'>Your message is greater than 200 characters!</li>");
+            }
+
         } else {
             alert("Your message is empty");
         }
@@ -113,17 +118,10 @@ socket.on("updatePlayerList", function(usernames) {
 });
 
 socket.on("chatMessage", function(message, username) {
-    // Prevent html injection
-    message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
     $("#chatMessages").append("<li>" + username + ": " +  message + "</li>");
 });
 
 socket.on("serverMessage", function(message) {
-    // Prevent html injection
-    message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-
     $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
 });
 

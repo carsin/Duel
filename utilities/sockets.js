@@ -6,7 +6,7 @@ exports.socketServer = function(app, server) {
     io.on("connection", function(socket) {
         socket.emit("serverMessage", "Welcome to duel.wtf!");
         socket.join("global");
-        socket.username = "XD" + String(Math.round(Math.random() * 100));
+        socket.username = "XD" + String(Math.round(Math.random() * 1000));
         socket.emit("changeUsername", socket.username);
 
         socket.on("createRoom", function() {
@@ -80,6 +80,10 @@ exports.socketServer = function(app, server) {
        });
 
        socket.on("chatMessage", function(message, roomId) {
+            // Prevent html injection
+           message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+           message = message.subString(0, 200);
+
            io.to(roomId).emit("chatMessage", message, socket.username);
            console.log("(" + roomId + ") " + socket.username + ": " + message);
        });
