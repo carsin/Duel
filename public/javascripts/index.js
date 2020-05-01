@@ -192,7 +192,8 @@ $(document).ready(function() {
                 if (realClock >= seconds) {
                     clearInterval(timer);
                     // $("#cpsGameTimerDisplay").html(seconds); // Sneakily fix the counter >:D
-                    console.log("CPS: " + (clickCount / seconds).toFixed(2))
+                    console.log("CPS: " + (clickCount / seconds));
+                    socket.emit("cpsGameComplete", Number(clickCount / seconds));
                     return;
                 }
         }, updateInterval);
@@ -204,7 +205,7 @@ $(document).ready(function() {
     }
 
     //
-    // ─── CPS GAME ───────────────────────────────────────────────────────────────────
+    // ─── RNG GAME ───────────────────────────────────────────────────────────────────
     //
 
     function runRngGame() {

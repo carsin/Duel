@@ -11,27 +11,26 @@ exports.socketServer = function(app, server) {
         socket.emit("changeUsername", socket.username);
 
         socket.on("createRoom", function() {
-            var roomId = idGen.generateRandomId();
-            socket.join(roomId);
+            socket.currentRoom = idGen.generateRandomId();
+            socket.join(socket.currentRoom);
             socket.leave("global");
-            socket.currentRoom = roomId;
 
-            var room = io.sockets.adapter.rooms[roomId];
+            var room = io.sockets.adapter.rooms[socket.currentRoom];
 
             room.usernames = [socket.username];
 
-            socket.emit("confirmRoomCreation", roomId);
-            io.to(roomId).emit("updatePlayerList", room.usernames);
-            io.to(roomId).emit("serverMessage", socket.username + " connected.");
+            socket.emit("confirmRoomCreation", socket.currentRoom);
+            io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
+            io.to(socket.currentRoom).emit("serverMessage", socket.username + " connected.");
 
             socket.on("gameStarted", function(selectedGame) {
-                console.log(socket.username + " started game " + selectedGame + " in room " + roomId);
+                console.log(socket.username + " started game " + selectedGame + " in room " + socket.currentRoom);
                 room.selectedGame = selectedGame;
 
                 room.playersReady = [];
-                socket.on("ready", function() { playerReady(socket, roomId)});
+                socket.on("ready", function() { playerReady(socket)});
 
-                io.to(roomId).emit("loadGame", selectedGame);
+                io.to(socket.currentRoom).emit("loadGame", selectedGame);
             });
 
             socket.on("disconnect", function() {
@@ -39,11 +38,11 @@ exports.socketServer = function(app, server) {
                 var index = room.usernames.indexOf(socket.username);
                 if (index !== -1) room.usernames.splice(index, 1);
 
-                io.to(roomId).emit("updatePlayerList", room.usernames);
-                io.to(roomId).emit("serverMessage", "Host " + socket.username + " disconnected. The game cannot be started.");
-                console.log(socket.username + " (host) disconnected from room " + roomId + ", closing it.");
+                io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
+                io.to(socket.currentRoom).emit("serverMessage", "Host " + socket.username + " disconnected. The game cannot be started.");
+                console.log(socket.username + " (host) disconnected from room " + socket.currentRoom + ", closing it.");
             });
-            console.log("user " + socket.username + " created room with id " + roomId);
+            console.log("user " + socket.username + " created room with id " + socket.currentRoom);
         });
 
         socket.on("attemptRoomJoin", function(roomId) {
@@ -64,7 +63,7 @@ exports.socketServer = function(app, server) {
 
                         console.log(socket.username + " joined room " + roomId);
 
-                        socket.on("ready", function() { playerReady(socket, roomId)});
+                        socket.on("ready", function() { playerReady(socket)});
                         socket.on("disconnect", function() {
                             // Remove user from username list
                             var index = room.usernames.indexOf(socket.username);
@@ -105,20 +104,20 @@ exports.socketServer = function(app, server) {
        });
     });
 
-    var playerReady = function(socket, roomId) {
-        var room = io.sockets.adapter.rooms[roomId];
+    var playerReady = function(socket) {
+        var room = io.sockets.adapter.rooms[socket.currentRoom];
         if (!(room.playersReady.includes(socket.username))) {
             room.playersReady.push(socket.username);
-            io.to(roomId).emit("serverMessage", socket.username + " is ready. " + room.playersReady.length + "/" + room.usernames.length);
+            io.to(socket.currentRoom).emit("serverMessage", socket.username + " is ready. " + room.playersReady.length + "/" + room.usernames.length);
         } else {
             var index = room.playersReady.indexOf(socket.username);
             if (index !== -1) room.playersReady.splice(index, 1);
-            io.to(roomId).emit("serverMessage", socket.username + " is no longer ready. " + room.playersReady.length + "/" + room.usernames.length);
+            io.to(socket.currentRoom).emit("serverMessage", socket.username + " is no longer ready. " + room.playersReady.length + "/" + room.usernames.length);
         }
 
         if (room.playersReady.length == room.length) {
-            io.to(roomId).emit("serverMessage", "All players ready.");
-            io.to(roomId).emit("allPlayersReady", room.selectedGame);
+            io.to(socket.currentRoom).emit("serverMessage", "All players ready.");
+            io.to(socket.currentRoom).emit("allPlayersReady", room.selectedGame);
         }
     }
 }
