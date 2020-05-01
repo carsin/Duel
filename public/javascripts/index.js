@@ -132,11 +132,17 @@ socket.on("serverMessage", function(message) {
 socket.on("loadGame", function(selectedGame) {
     $("#lobbyRoomView").addClass("hidden");
     $("#gameViewContainer").removeClass("hidden");
-    console.log(selectedGame + " loaded");
+    console.log(selectedGame + " loading");
 
     switch(selectedGame) {
-        case "cpsGame": runCpsGame(); break;
-        case "rngGame": $("#rngGameView").removeClass("hidden"); break;
+        case "cpsGame":
+            $("#cpsGameView").removeClass("hidden");
+            $("#cpsGameReadyView").removeClass("hidden");
+            break;
+        case "rngGame":
+            $("#rngGameView").removeClass("hidden");
+            $("#rngGameReadyView").removeClass("hidden");
+            break;
         default: console.log("couldn't find game " + selectedGame);
     }
 });
@@ -144,13 +150,20 @@ socket.on("loadGame", function(selectedGame) {
 socket.on("allPlayersReady", function() {
     currentReadyButtonClicked.attr("disabled", true);
 
+    // Ready countdown
     countdownCount = 5;
     $("#cpsGameReadyCountdown").html(countdownCount);
-    countdownTimer = setInterval(function() {
-        if (countdownCount == 0) clearInterval(countdownTimer);
+    var countdownTimer = setInterval(function() {
+        if (countdownCount <= 0) {
+            clearInterval(countdownTimer);
+            $("#cpsGameReadyView").addClass("hidden");
+            $("#cpsGame").removeClass("hidden");
+            runCpsGame();
+            return;
+        }
+
         countdownCount--;
         $("#cpsGameReadyCountdown").html(countdownCount);
-        countdownTimer;
     }, 1000)
 });
 
@@ -165,5 +178,4 @@ socket.on("allPlayersReady", function() {
 //
 
 function runCpsGame() {
-    $("#cpsGameView").removeClass("hidden");
 }

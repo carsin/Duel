@@ -39,13 +39,19 @@ html
         .view.hidden#gameViewContainer
             .gameView.hidden#cpsGameView
                 #cpsGameReadyView
-                    h1 this is the cps game
                     p click the button as many times as possible in 10 seconds. :)
                     button.readyButton Ready
                     p#cpsGameReadyCountdown
-                .game#cpsGame
+                .game.hidden#cpsGame
+                    h1 this is the cps game
+                    button#cpsGameClickButton CLICK ME !!
             .gameView.hidden#rngGameView
-                h1 this is the rng game view
+                #rngGameReadyView
+                    p rng
+                    button.readyButton Ready
+                    p#rngGameReadyCountdown
+                .game.hidden#rngGame
+                    h1 this is the rng game
         #chatbox
             #messageWrapper
                 ul#chatMessages
