@@ -101,6 +101,10 @@ $(document).ready(function() {
         $("#lobbyRoomView").removeClass("hidden");
     });
 
+    socket.on("refreshPage", function() {
+        location.reload();
+    });
+
     socket.on("updatePlayerList", function(usernames) {
         $("#playerList").html("");
         for (var i = 0; i < usernames.length; i++) {

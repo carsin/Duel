@@ -38,15 +38,8 @@ exports.socketServer = function(app, server) {
                 io.to(socket.currentRoom).emit("loadGame", selectedGame);
             });
 
-            socket.on("disconnect", function() {
-                // Remove user from username list
-                let index = room.usernames.indexOf(socket.username);
-                if (index !== -1) room.usernames.splice(index, 1);
+            socket.on("disconnect", function() { onDisconnect(socket, room, true) });
 
-                io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
-                io.to(socket.currentRoom).emit("serverMessage", "Host " + socket.username + " disconnected. The game cannot be started.");
-                console.log(socket.username + " (host) disconnected from room " + socket.currentRoom + ", closing it.");
-            });
             console.log("user " + socket.username + " created room with id " + socket.currentRoom);
         });
 
@@ -71,16 +64,8 @@ exports.socketServer = function(app, server) {
                         // Set up shared listeners
                         socket.on("ready", function() { playerReady(socket)});
                         socket.on("cpsGameComplete", function(cpsScore) { cpsGame(socket, cpsScore)});
+                        socket.on("disconnect", function() { onDisconnect(socket, room, false) });
 
-                        socket.on("disconnect", function() {
-                            // Remove user from username list
-                            let index = room.usernames.indexOf(socket.username);
-                            if (index !== -1) room.usernames.splice(index, 1);
-
-                            io.to(roomId).emit("updatePlayerList", room.usernames);
-                            io.to(roomId).emit("serverMessage", socket.username + " disconnected.");
-                            console.log(socket.username + " disconnected from room " + roomId);
-                        });
                     } else {
                         console.log(socket.username + " failed joining room " + roomId + ", username taken");
                         socket.emit("roomJoinFail");
@@ -112,6 +97,21 @@ exports.socketServer = function(app, server) {
        });
     });
 
+    var onDisconnect = function(socket, room, isHost) {
+        // Remove user from username list
+        let index = room.usernames.indexOf(socket.username);
+        if (index !== -1) room.usernames.splice(index, 1);
+
+        if (isHost) {
+            console.log(socket.username + " (host) disconnected from room " + socket.currentRoom + ", closing it.");
+            io.to(socket.currentRoom).emit("refreshPage");
+        } else {
+            console.log(socket.username + " disconnected from room " + socket.currentRoom);
+            io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
+            io.to(socket.currentRoom).emit("serverMessage", socket.username + " disconnected.");
+        }
+    }
+
     var playerReady = function(socket) {
         let room = io.sockets.adapter.rooms[socket.currentRoom];
         if (!(room.playersReady.includes(socket.username))) {
@@ -141,6 +141,8 @@ exports.socketServer = function(app, server) {
         // If all players have completed the game
         if (room.usernames.length == room.cpsGameData.length) {
             console.log(room.cpsGameData);
+
+            // Sort the array of game data by the cpsScores inside each object.
             room.cpsGameData.sort(function(a, b) {
                 if (a.cpsScore < b.cpsScore) return 1;
                 if (a.cpsScore > b.cpsScore) return -1;
