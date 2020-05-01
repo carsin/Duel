@@ -1,20 +1,18 @@
-var socket = io();
-var username = "XD" + String(Math.round(Math.random() * 100));
 var inputRoomId;
 var currentRoomId = "global";
 var currentReadyButtonClicked;
+var socket = io();
 
 //
 // ─── JQUERY HANDLERS ────────────────────────────────────────────────────────────
 //
 
 $(document).ready(function() {
-    $("#usernameDisplay").html(" " + username)
     $("#usernameInputForm").submit(function(e) {
         e.preventDefault();
-        getUsername = $("#usernameInput").val();
-        if (getUsername.trim() != "" && getUsername.length <= 16) {
-            username = getUsername.replace(/</g, "&lt;").replace(/>/g, "&gt;");;
+        username = $("#usernameInput").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        if (username.trim() != "" && username.length <= 16) {
+            socket.emit("setUsername", username);
             $("#usernameDisplay").html(" " + username)
             $("#usernameInput").val("");
         } else {
@@ -29,7 +27,7 @@ $(document).ready(function() {
     });
 
     $("#createRoomViewButton").click(function() {
-        socket.emit("createRoom", username);
+        socket.emit("createRoom");
     });
 
     $("#mainViewButton").click(function() {
@@ -42,7 +40,7 @@ $(document).ready(function() {
             alert("no id input")
         } else {
             inputRoomId = $("#roomJoinIdInput").val();
-            socket.emit("attemptRoomJoin", username, inputRoomId);
+            socket.emit("attemptRoomJoin", inputRoomId);
         }
 
     });
@@ -52,7 +50,7 @@ $(document).ready(function() {
         message = $("#chatMessageInput").val();
 
         if (message.trim() != "") {
-            socket.emit("chatMessage", message, username, currentRoomId)
+            socket.emit("chatMessage", message, currentRoomId)
         } else {
             alert("Your message is empty");
         }
@@ -129,6 +127,12 @@ socket.on("serverMessage", function(message) {
     $("#chatMessages").append("<li class='serverMessage'>" + message + "</li>");
 });
 
+socket.on("changeUsername", function(username) {
+    $("#usernameDisplay").html(" " + username)
+    $("#usernameInput").val("");
+    $("#chatMessages").append("<li class='serverMessage'>Username set to " + username + "</li>");
+});
+
 socket.on("loadGame", function(selectedGame) {
     $("#lobbyRoomView").addClass("hidden");
     $("#gameViewContainer").removeClass("hidden");
@@ -136,7 +140,6 @@ socket.on("loadGame", function(selectedGame) {
 
     try {
         $("#" + selectedGame + "View").removeClass("hidden");
-        console.log($("#" + selectedGame + "GameView"));
         $("#" + selectedGame + "ReadyView").removeClass("hidden");
     } catch(e) {
         console.log("couldn't find game " + selectedGame);

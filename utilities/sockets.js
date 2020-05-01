@@ -6,15 +6,16 @@ exports.socketServer = function(app, server) {
     io.on("connection", function(socket) {
         socket.emit("serverMessage", "Welcome to duel.wtf!");
         socket.join("global");
-        socket.on("createRoom", function(username) {
+        socket.username = "XD" + String(Math.round(Math.random() * 100));
+        socket.emit("changeUsername", socket.username);
+
+        socket.on("createRoom", function() {
             var roomId = idGen.generateRandomId();
             socket.join(roomId);
 
             var room = io.sockets.adapter.rooms[roomId];
 
-            socket.username = username;
-            room.usernames = [username];
-            room.selectedGame;
+            room.usernames = [socket.username];
 
             socket.emit("confirmRoomCreation", roomId);
             io.to(roomId).emit("updatePlayerList", room.usernames);
@@ -41,23 +42,21 @@ exports.socketServer = function(app, server) {
             console.log("user " + socket.username + " created room with id " + roomId);
         });
 
-        socket.on("attemptRoomJoin", function(username, roomId) {
+        socket.on("attemptRoomJoin", function(roomId) {
             // Not elegant. Refactor in future?
-            var room = io.sockets.adapter.rooms[roomId];
-
             try {
+                var room = io.sockets.adapter.rooms[roomId];
                 if (room.length >= 1) {
-                    if (!(room.usernames.includes(username))) {
+                    if (!(room.usernames.includes(socket.username))) {
                         socket.join(roomId);
 
-                        room.usernames.push(username);
-                        socket.username = username;
+                        room.usernames.push(socket.username);
 
                         io.to(roomId).emit("updatePlayerList", room.usernames);
                         io.to(roomId).emit("serverMessage", socket.username + " connected.");
                         socket.emit("roomJoinSuccess", room, roomId);
 
-                        console.log(username + " joined room " + roomId);
+                        console.log(socket.username + " joined room " + roomId);
 
                         socket.on("ready", function() { playerReady(socket, roomId)});
                         socket.on("disconnect", function() {
@@ -70,19 +69,29 @@ exports.socketServer = function(app, server) {
                             console.log(socket.username + " disconnected from room " + roomId);
                         });
                     } else {
-                        console.log(username + " failed joining room " + roomId + ", username taken");
+                        console.log(socket.username + " failed joining room " + roomId + ", username taken");
                         socket.emit("roomJoinFail");
                     }
                 }
-            } catch(e) {
+            } catch (e) {
+                console.log(socket.username + " failed joining room " + roomId + ", room doesn't exist");
                 socket.emit("roomJoinFail");
-                console.log(username + " failed joining room " + roomId + ", room doesn't exist");
             }
        });
 
-       socket.on("chatMessage", function(message, username, roomId) {
-           io.to(roomId).emit("chatMessage", message, username);
-           console.log("(" + roomId + ") " + username + ": " + message);
+       socket.on("chatMessage", function(message, roomId) {
+           io.to(roomId).emit("chatMessage", message, socket.username);
+           console.log("(" + roomId + ") " + socket.username + ": " + message);
+       });
+
+       socket.on("setUsername", function(username) {
+            username = username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            if (username.trim() != "" && username.length <= 16) {
+                socket.username = username;
+            } else {
+                socket.to(socket).emit("Username is empty or more than 16 characters");
+
+            }
        });
     });
 
