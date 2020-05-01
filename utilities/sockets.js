@@ -59,6 +59,7 @@ exports.socketServer = function(app, server) {
 
                         socket.on("ready", function() { playerReady(socket, roomId)});
                         socket.on("disconnect", function() {
+                            // Remove user from username list
                             var index = room.usernames.indexOf(socket.username);
                             if (index !== -1) room.usernames.splice(index, 1);
 

@@ -143,6 +143,15 @@ socket.on("loadGame", function(selectedGame) {
 
 socket.on("allPlayersReady", function() {
     currentReadyButtonClicked.attr("disabled", true);
+
+    countdownCount = 5;
+    $("#cpsGameReadyCountdown").html(countdownCount);
+    countdownTimer = setInterval(function() {
+        if (countdownCount == 0) clearInterval(countdownTimer);
+        countdownCount--;
+        $("#cpsGameReadyCountdown").html(countdownCount);
+        countdownTimer;
+    }, 1000)
 });
 
 //
