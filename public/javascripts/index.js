@@ -10,7 +10,7 @@ $(document).ready(function() {
 
     $("#usernameInputForm").submit(function(e) {
         e.preventDefault();
-        username = $("#usernameInput").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        let username = $("#usernameInput").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
         if (username.trim() != "" && username.length <= 16) {
             socket.emit("setUsername", username);
             $("#usernameDisplay").html(" " + username)
@@ -47,7 +47,7 @@ $(document).ready(function() {
 
     $("#chatMessageForm").submit(function(e) {
         e.preventDefault();
-        message = $("#chatMessageInput").val();
+        let message = $("#chatMessageInput").val();
 
         if (message.trim() != "") {
             if (message.length < 200) {
@@ -64,7 +64,7 @@ $(document).ready(function() {
     });
 
     $("#startGameButton").click(function() {
-        selectedGame = $("input[name=selectedGame]:checked", "#gameCreateForm").val()
+        let selectedGame = $("input[name=selectedGame]:checked", "#gameCreateForm").val()
         socket.emit("gameStarted", selectedGame);
         console.log(selectedGame + " game started");
     });
@@ -85,7 +85,6 @@ $(document).ready(function() {
     //
 
     socket.on("confirmRoomCreation", function(roomId) {
-        currentRoomId = roomId;
         $("#roomIdDisplay").html(" " + roomId);
         $("#mainView").addClass("hidden");
         $("#gameCreateForm").removeClass("hidden");
@@ -97,7 +96,6 @@ $(document).ready(function() {
     });
 
     socket.on("roomJoinSuccess", function(room, roomId) {
-        currentRoomId = roomId;
         $("#roomIdDisplay").html(" " + roomId);
         $("#joinRoomView").addClass("hidden");
         $("#lobbyRoomView").removeClass("hidden");
@@ -144,9 +142,9 @@ $(document).ready(function() {
     socket.on("allPlayersReady", function(game) {
         currentReadyButtonClicked.attr("disabled", true);
         // Ready countdown
-        countdownCount = 3;
+        let countdownCount = 3;
         $("#" + game + "ReadyCountdown").html(countdownCount);
-        var countdownTimer = setInterval(function() {
+        let countdownTimer = setInterval(function() {
             if (countdownCount <= 0) {
                 clearInterval(countdownTimer);
                 $("#" + game + "ReadyView").addClass("hidden");
@@ -177,12 +175,12 @@ $(document).ready(function() {
     //
 
     function runCpsGame() {
-        seconds = 10;
-        clock = 0;
-        updateInterval = 10; // How often time is progressed
-        clickCount = 0;
+        let seconds = 10;
+        let clock = 0;
+        let updateInterval = 10; // How often time is progressed
+        let clickCount = 0;
 
-        timer = setInterval(function() {
+        let timer = setInterval(function() {
                 clock++;
                 realClock = (clock / (1000 / updateInterval));
                 displayClock = Number((Math.round(realClock + "e+2") + "e-2"));

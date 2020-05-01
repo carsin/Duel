@@ -15,7 +15,7 @@ exports.socketServer = function(app, server) {
             socket.join(socket.currentRoom);
             socket.leave("global");
 
-            var room = io.sockets.adapter.rooms[socket.currentRoom];
+            let room = io.sockets.adapter.rooms[socket.currentRoom];
 
             room.usernames = [socket.username];
 
@@ -35,7 +35,7 @@ exports.socketServer = function(app, server) {
 
             socket.on("disconnect", function() {
                 // Remove user from username list
-                var index = room.usernames.indexOf(socket.username);
+                let index = room.usernames.indexOf(socket.username);
                 if (index !== -1) room.usernames.splice(index, 1);
 
                 io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
@@ -48,7 +48,7 @@ exports.socketServer = function(app, server) {
         socket.on("attemptRoomJoin", function(roomId) {
             // Not elegant. Refactor in future?
             try {
-                var room = io.sockets.adapter.rooms[roomId];
+                let room = io.sockets.adapter.rooms[roomId];
                 if (room.length >= 1) {
                     if (!(room.usernames.includes(socket.username))) {
                         socket.join(roomId);
@@ -66,7 +66,7 @@ exports.socketServer = function(app, server) {
                         socket.on("ready", function() { playerReady(socket)});
                         socket.on("disconnect", function() {
                             // Remove user from username list
-                            var index = room.usernames.indexOf(socket.username);
+                            let index = room.usernames.indexOf(socket.username);
                             if (index !== -1) room.usernames.splice(index, 1);
 
                             io.to(roomId).emit("updatePlayerList", room.usernames);
@@ -105,12 +105,12 @@ exports.socketServer = function(app, server) {
     });
 
     var playerReady = function(socket) {
-        var room = io.sockets.adapter.rooms[socket.currentRoom];
+        let room = io.sockets.adapter.rooms[socket.currentRoom];
         if (!(room.playersReady.includes(socket.username))) {
             room.playersReady.push(socket.username);
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " is ready. " + room.playersReady.length + "/" + room.usernames.length);
         } else {
-            var index = room.playersReady.indexOf(socket.username);
+            let index = room.playersReady.indexOf(socket.username);
             if (index !== -1) room.playersReady.splice(index, 1);
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " is no longer ready. " + room.playersReady.length + "/" + room.usernames.length);
         }
@@ -119,5 +119,10 @@ exports.socketServer = function(app, server) {
             io.to(socket.currentRoom).emit("serverMessage", "All players ready.");
             io.to(socket.currentRoom).emit("allPlayersReady", room.selectedGame);
         }
+    }
+
+    var cpsGame = function(socket, cpsCount) {
+        room = io.sockets.adapter.rooms[socket.currentRoom];
+
     }
 }
