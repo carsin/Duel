@@ -17,8 +17,12 @@ exports.socketServer = function(app, server) {
 
             let room = io.sockets.adapter.rooms[socket.currentRoom];
 
+            // Room Variables
             room.usernames = [socket.username];
+            room.cpsGameCompletedPlayers = [];
+            room.cpsGameScores = [];
 
+            // Notify client
             socket.emit("confirmRoomCreation", socket.currentRoom);
             io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " connected.");
@@ -122,7 +126,14 @@ exports.socketServer = function(app, server) {
     }
 
     var cpsGame = function(socket, cpsCount) {
-        room = io.sockets.adapter.rooms[socket.currentRoom];
+        let room = io.sockets.adapter.rooms[socket.currentRoom];
+        room.cpsGameCompletedPlayers.push(socket.username);
+        room.cpsGameScores.push(cpsCount)
+
+        // If all players have completed the game
+        if (room.usernames.length == room.cpsGameCompletedPlayers.length) {
+
+        }
 
     }
 }

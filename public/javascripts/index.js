@@ -145,6 +145,9 @@ $(document).ready(function() {
         let countdownCount = 3;
         $("#" + game + "ReadyCountdown").html(countdownCount);
         let countdownTimer = setInterval(function() {
+            countdownCount--;
+            $("#" + game + "ReadyCountdown").html(countdownCount);
+
             if (countdownCount <= 0) {
                 clearInterval(countdownTimer);
                 $("#" + game + "ReadyView").addClass("hidden");
@@ -158,9 +161,6 @@ $(document).ready(function() {
 
                 return;
             }
-
-            countdownCount--;
-            $("#" + game + "ReadyCountdown").html(countdownCount);
         }, 1000)
     });
 
