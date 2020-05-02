@@ -7,8 +7,9 @@ exports.socketServer = function(app, server) {
         socket.emit("serverMessage", "Welcome to duel.wtf!");
         socket.join("global");
         socket.currentRoom = "global";
-        socket.username = String(Math.round(Math.random() * 1000));
+        socket.username = "Temp" + String(Math.round(Math.random() * 1000));
         socket.emit("changeUsername", socket.username);
+        socket.score = 0;
 
         socket.on("createRoom", function() {
             socket.currentRoom = idGen.generateRandomId();
@@ -22,6 +23,7 @@ exports.socketServer = function(app, server) {
             room.cpsGameData = [];
 
             // Notify client
+            console.log("user " + socket.username + " created room with id " + socket.currentRoom);
             socket.emit("confirmRoomCreation", socket.currentRoom);
             io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " connected.");
@@ -39,8 +41,6 @@ exports.socketServer = function(app, server) {
             });
 
             socket.on("disconnect", function() { onDisconnect(socket, room, true) });
-
-            console.log("user " + socket.username + " created room with id " + socket.currentRoom);
         });
 
         socket.on("attemptRoomJoin", function(roomId) {
@@ -65,7 +65,6 @@ exports.socketServer = function(app, server) {
                         socket.on("ready", function() { playerReady(socket)});
                         socket.on("cpsGameComplete", function(cpsScore) { cpsGame(socket, cpsScore)});
                         socket.on("disconnect", function() { onDisconnect(socket, room, false) });
-
                     } else {
                         console.log(socket.username + " failed joining room " + roomId + ", username taken");
                         socket.emit("roomJoinFail");
@@ -88,6 +87,7 @@ exports.socketServer = function(app, server) {
 
        socket.on("setUsername", function(username) {
             username = username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
             if (username.trim() != "" && username.length <= 16) {
                 socket.username = username;
             } else {
@@ -97,7 +97,7 @@ exports.socketServer = function(app, server) {
        });
     });
 
-    var onDisconnect = function(socket, room, isHost) {
+    const onDisconnect = function(socket, room, isHost) {
         // Remove user from username list
         let index = room.usernames.indexOf(socket.username);
         if (index !== -1) room.usernames.splice(index, 1);
@@ -112,8 +112,9 @@ exports.socketServer = function(app, server) {
         }
     }
 
-    var playerReady = function(socket) {
+    const playerReady = function(socket) {
         let room = io.sockets.adapter.rooms[socket.currentRoom];
+
         if (!(room.playersReady.includes(socket.username))) {
             room.playersReady.push(socket.username);
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " is ready. " + room.playersReady.length + "/" + room.usernames.length);
@@ -129,10 +130,11 @@ exports.socketServer = function(app, server) {
         }
     }
 
-    var cpsGame = function(socket, cpsCount) {
+    const cpsGame = function(socket, cpsCount) {
         let room = io.sockets.adapter.rooms[socket.currentRoom];
         room.cpsGameData.push({
             username: socket.username,
+            socket: socket,
             cpsScore: cpsCount,
         });
 
@@ -140,8 +142,6 @@ exports.socketServer = function(app, server) {
 
         // If all players have completed the game
         if (room.usernames.length == room.cpsGameData.length) {
-            console.log(room.cpsGameData);
-
             // Sort the array of game data by the cpsScores inside each object.
             room.cpsGameData.sort(function(a, b) {
                 if (a.cpsScore < b.cpsScore) return 1;
@@ -149,7 +149,10 @@ exports.socketServer = function(app, server) {
                 return 0;
             });
 
-            console.log(room.cpsGameData);
+            let winner = room.cpsGameData[0];
+            winner.socket.score++;
+            io.to(socket.currentRoom).emit("serverMessage", winner.username + " won with " + winner.cpsScore + "CPS");
+            io.to(socket.currentRoom).emit("showLobby");
         }
     }
 }

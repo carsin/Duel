@@ -1,6 +1,7 @@
 $(document).ready(function() {
     var inputRoomId;
     var currentReadyButtonClicked;
+
     // Connect to server
     var socket = io();
 
@@ -105,6 +106,12 @@ $(document).ready(function() {
         location.reload();
     });
 
+    socket.on("showLobby", function() {
+        $(".gameView").not(".hidden").addClass("hidden");
+        $("#gameViewContainer").not(".hidden").addClass("hidden");
+        $("#lobbyRoomView").removeClass("hidden");
+    });
+
     socket.on("updatePlayerList", function(usernames) {
         $("#playerList").html("");
         for (var i = 0; i < usernames.length; i++) {
@@ -193,7 +200,6 @@ $(document).ready(function() {
                 // Check if time is up
                 if (realClock >= seconds) {
                     clearInterval(timer);
-                    // $("#cpsGameTimerDisplay").html(seconds); // Sneakily fix the counter >:D
                     console.log("CPS: " + (clickCount / seconds));
                     socket.emit("cpsGameComplete", Number(clickCount / seconds));
                     return;
