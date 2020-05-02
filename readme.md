@@ -16,8 +16,15 @@ Ideas:
     - Trivia (with a twist?)
     - Duel (reaction time)
 - Single or multiple rounds (bo3, bo5, bo7)
-- Up to 4 players
+- Optional award ceremony at end
+- Up to 8 players
 
 Design:
     - Simple code in URL to link (fightmeirl.com/d3bd92n)
-    - On main homepage ()
+
+Maybe:
+- Account system
+    - Track stats
+    - Track records vs other accounts
+- Wagers
+    - Dares?

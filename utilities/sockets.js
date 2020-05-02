@@ -7,7 +7,7 @@ exports.socketServer = function(app, server) {
         socket.emit("serverMessage", "Welcome to duel.wtf!");
         socket.join("global");
         socket.currentRoom = "global";
-        socket.username = "XD" + String(Math.round(Math.random() * 1000));
+        socket.username = String(Math.round(Math.random() * 1000));
         socket.emit("changeUsername", socket.username);
 
         socket.on("createRoom", function() {
