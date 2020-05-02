@@ -102,9 +102,12 @@ exports.socketServer = function(app, server) {
     });
 
     const onDisconnect = function(socket, room, isHost) {
-        // Remove user from username list
+        // Remove user from connectedSocketData array
         let index = room.connectedSocketData.usernames.indexOf(socket.username);
-        if (index !== -1) room.connectedSocketData.usernames.splice(index, 1);
+        if (index !== -1) {
+            room.connectedSocketData.usernames.splice(index, 1);
+            room.connectedSocketData.scores.splice(index, 1);
+        }
 
         if (isHost) {
             console.log(socket.username + " (host) disconnected from room " + socket.currentRoom + ", closing it.");

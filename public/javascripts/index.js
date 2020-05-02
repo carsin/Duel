@@ -134,7 +134,7 @@ $(document).ready(function() {
     socket.on("changeUsername", function(username) {
         $("#usernameDisplay").html(" " + username)
         $("#usernameInput").val("");
-        $("#chatMessages").append("<li class='serverMessage'>Username set to " + username + "</li>");
+        // $("#chatMessages").append("<li class='serverMessage'>Username set to " + username + "</li>");
     });
 
     socket.on("loadGame", function(selectedGame) {
