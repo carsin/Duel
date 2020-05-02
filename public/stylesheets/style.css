@@ -37,7 +37,7 @@ h1, h3, p {
     position: absolute;
     top: 60vh;
     height: 20vh;
-    width: 12vw;
+    max-width: 20vw;
     border-right: 1px solid black;
     border-top: 1px solid black;
     left: 0;

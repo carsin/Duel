@@ -19,13 +19,17 @@ exports.socketServer = function(app, server) {
             let room = io.sockets.adapter.rooms[socket.currentRoom];
 
             // Room Variables
-            room.usernames = [socket.username];
+            room.connectedSocketData = {
+                usernames: [socket.username],
+                scores: [socket.score],
+            }
+
             room.cpsGameData = [];
 
             // Notify client
             console.log("user " + socket.username + " created room with id " + socket.currentRoom);
             socket.emit("confirmRoomCreation", socket.currentRoom);
-            io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
+            io.to(socket.currentRoom).emit("updatePlayerList", room.connectedSocketData);
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " connected.");
 
             socket.on("gameStarted", function(selectedGame) {
@@ -48,14 +52,15 @@ exports.socketServer = function(app, server) {
             try {
                 let room = io.sockets.adapter.rooms[roomId];
                 if (room.length >= 1) {
-                    if (!(room.usernames.includes(socket.username))) {
+                    if (!(room.connectedSocketData.usernames.includes(socket.username))) {
                         socket.join(roomId);
                         socket.leave("global");
                         socket.currentRoom = roomId;
 
-                        room.usernames.push(socket.username);
+                        room.connectedSocketData.usernames.push(socket.username);
+                        room.scores.push(socket.score);
 
-                        io.to(roomId).emit("updatePlayerList", room.usernames);
+                        io.to(roomId).emit("updatePlayerList", room.connectedSocketData.usernames);
                         io.to(roomId).emit("serverMessage", socket.username + " connected.");
                         socket.emit("roomJoinSuccess", room, roomId);
 
@@ -99,15 +104,15 @@ exports.socketServer = function(app, server) {
 
     const onDisconnect = function(socket, room, isHost) {
         // Remove user from username list
-        let index = room.usernames.indexOf(socket.username);
-        if (index !== -1) room.usernames.splice(index, 1);
+        let index = room.connectedSocketData.usernames.indexOf(socket.username);
+        if (index !== -1) room.connectedSocketData.usernames.splice(index, 1);
 
         if (isHost) {
             console.log(socket.username + " (host) disconnected from room " + socket.currentRoom + ", closing it.");
             io.to(socket.currentRoom).emit("refreshPage");
         } else {
             console.log(socket.username + " disconnected from room " + socket.currentRoom);
-            io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
+            io.to(socket.currentRoom).emit("updatePlayerList", room.connectedSocketData);
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " disconnected.");
         }
     }
@@ -117,11 +122,11 @@ exports.socketServer = function(app, server) {
 
         if (!(room.playersReady.includes(socket.username))) {
             room.playersReady.push(socket.username);
-            io.to(socket.currentRoom).emit("serverMessage", socket.username + " is ready. " + room.playersReady.length + "/" + room.usernames.length);
+            io.to(socket.currentRoom).emit("serverMessage", socket.username + " is ready. " + room.playersReady.length + "/" + room.connectedSocketData.usernames.length);
         } else {
             let index = room.playersReady.indexOf(socket.username);
             if (index !== -1) room.playersReady.splice(index, 1);
-            io.to(socket.currentRoom).emit("serverMessage", socket.username + " is no longer ready. " + room.playersReady.length + "/" + room.usernames.length);
+            io.to(socket.currentRoom).emit("serverMessage", socket.username + " is no longer ready. " + room.playersReady.length + "/" + room.connectedSocketData.usernames.length);
         }
 
         if (room.playersReady.length == room.length) {
@@ -141,7 +146,7 @@ exports.socketServer = function(app, server) {
         console.log(socket.username + " scored " + cpsCount + " CPS");
 
         // If all players have completed the game
-        if (room.usernames.length == room.cpsGameData.length) {
+        if (room.connectedSocketData.usernames.length == room.cpsGameData.length) {
             // Sort the array of game data by the cpsScores inside each object.
             room.cpsGameData.sort(function(a, b) {
                 if (a.cpsScore < b.cpsScore) return 1;
