@@ -25,11 +25,12 @@ exports.socketServer = function(app, server) {
             room.connectedSockets.push(socket);
             console.log("push socket")
 
+            var send = room.connectedSockets;
 
             // Notify client
             socket.emit("confirmRoomCreation", socket.currentRoom);
-            console.log("push socket")
-            io.to(socket.currentRoom).emit("updatePlayerList", room.connectedSockets);
+            io.to(socket.currentRoom).emit("updatePlayerList", send);
+            console.log("send sockets to client");
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " connected.");
             console.log("user " + socket.username + " created room with id " + socket.currentRoom);
 
