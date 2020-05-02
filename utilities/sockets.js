@@ -19,20 +19,14 @@ exports.socketServer = function(app, server) {
             let room = io.sockets.adapter.rooms[socket.currentRoom];
 
             // Room Variables
+            room.usernames = [socket.username];
             room.cpsGameData = [];
-            room.connectedSockets = [];
-            console.log("create socket array")
-            room.connectedSockets.push(socket);
-            console.log("push socket")
-
-            var send = room.connectedSockets;
 
             // Notify client
-            socket.emit("confirmRoomCreation", socket.currentRoom);
-            io.to(socket.currentRoom).emit("updatePlayerList", send);
-            console.log("send sockets to client");
-            io.to(socket.currentRoom).emit("serverMessage", socket.username + " connected.");
             console.log("user " + socket.username + " created room with id " + socket.currentRoom);
+            socket.emit("confirmRoomCreation", socket.currentRoom);
+            io.to(socket.currentRoom).emit("updatePlayerList", room.usernames);
+            io.to(socket.currentRoom).emit("serverMessage", socket.username + " connected.");
 
             socket.on("gameStarted", function(selectedGame) {
                 console.log(socket.username + " started game " + selectedGame + " in room " + socket.currentRoom);
@@ -59,7 +53,7 @@ exports.socketServer = function(app, server) {
                         socket.leave("global");
                         socket.currentRoom = roomId;
 
-                        room.sockets.push(socket);
+                        room.usernames.push(socket.username);
 
                         io.to(roomId).emit("updatePlayerList", room.usernames);
                         io.to(roomId).emit("serverMessage", socket.username + " connected.");

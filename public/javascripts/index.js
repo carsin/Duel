@@ -112,14 +112,13 @@ $(document).ready(function() {
         $("#lobbyRoomView").removeClass("hidden");
     });
 
-    socket.on("updatePlayerList", function(connectedSockets) {
-        console.log(connectedSockets);
+    socket.on("updatePlayerList", function(usernames) {
         $("#playerList").html("");
-        for (var i = 0; i < connectedSockets.length; i++) {
+        for (var i = 0; i < usernames.length; i++) {
             if (i == 0) {
-                $("#playerList").append("<li>" + connectedSockets[i].username + " (host) </li>");
+                $("#playerList").append("<li>" + usernames[i] + " (host) </li>");
             } else {
-                $("#playerList").append("<li>" + connectedSockets[i].username + "</li>");
+                $("#playerList").append("<li>" + usernames[i] + "</li>");
             }
         }
     });
