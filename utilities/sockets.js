@@ -9,7 +9,6 @@ exports.socketServer = function(app, server) {
         socket.currentRoom = "global";
         socket.username = "Temp" + String(Math.round(Math.random() * 1000));
         socket.emit("changeUsername", socket.username);
-        socket.score = 0;
 
         socket.on("createRoom", function() {
             socket.currentRoom = idGen.generateRandomId();
@@ -21,7 +20,7 @@ exports.socketServer = function(app, server) {
             // Room Variables
             room.connectedSocketData = {
                 usernames: [socket.username],
-                scores: [socket.score],
+                scores: [0],
             }
 
             room.cpsGameData = [];
@@ -58,7 +57,7 @@ exports.socketServer = function(app, server) {
                         socket.currentRoom = roomId;
 
                         room.connectedSocketData.usernames.push(socket.username);
-                        room.scores.push(socket.score);
+                        room.connectedSocketData.scores.push(0);
 
                         io.to(roomId).emit("updatePlayerList", room.connectedSocketData.usernames);
                         io.to(roomId).emit("serverMessage", socket.username + " connected.");
@@ -155,8 +154,11 @@ exports.socketServer = function(app, server) {
             });
 
             let winner = room.cpsGameData[0];
-            winner.socket.score++;
+            // Increase winners score
+            room.connectedSocketData.scores[room.connectedSocketData.usernames.indexOf(winner.username)]++;
+
             io.to(socket.currentRoom).emit("serverMessage", winner.username + " won with " + winner.cpsScore + "CPS");
+            io.to(socket.currentRoom).emit("updatePlayerList", room.connectedSocketData);
             io.to(socket.currentRoom).emit("showLobby");
         }
     }

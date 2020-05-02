@@ -186,7 +186,7 @@ $(document).ready(function() {
     //
 
     function runCpsGame() {
-        let seconds = 10;
+        let seconds = 5;
         let clock = 0;
         let updateInterval = 10; // How often time is progressed
         let clickCount = 0;
