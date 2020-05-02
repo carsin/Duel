@@ -31,14 +31,14 @@ exports.socketServer = function(app, server) {
             io.to(socket.currentRoom).emit("updatePlayerList", room.connectedSocketData);
             io.to(socket.currentRoom).emit("serverMessage", socket.username + " connected.");
 
+            // Set up shared listeners
+            socket.on("ready", function() { playerReady(socket)});
+            socket.on("cpsGameComplete", function(cpsScore) { cpsGame(socket, cpsScore)});
+
             socket.on("gameStarted", function(selectedGame) {
                 console.log(socket.username + " started game " + selectedGame + " in room " + socket.currentRoom);
                 room.selectedGame = selectedGame;
                 room.playersReady = [];
-
-                // Set up shared listeners
-                socket.on("ready", function() { playerReady(socket)});
-                socket.on("cpsGameComplete", function(cpsScore) { cpsGame(socket, cpsScore)});
 
                 io.to(socket.currentRoom).emit("loadGame", selectedGame);
             });
@@ -129,6 +129,7 @@ exports.socketServer = function(app, server) {
         }
 
         if (room.playersReady.length == room.length) {
+            room.playersReady = [];
             io.to(socket.currentRoom).emit("serverMessage", "All players ready.");
             io.to(socket.currentRoom).emit("allPlayersReady", room.selectedGame);
         }
@@ -136,6 +137,7 @@ exports.socketServer = function(app, server) {
 
     const cpsGame = function(socket, cpsCount) {
         let room = io.sockets.adapter.rooms[socket.currentRoom];
+        room.cpsGameData = [];
         room.cpsGameData.push({
             username: socket.username,
             socket: socket,

@@ -67,7 +67,6 @@ $(document).ready(function() {
     $("#startGameButton").click(function() {
         let selectedGame = $("input[name=selectedGame]:checked", "#gameCreateForm").val()
         socket.emit("gameStarted", selectedGame);
-        console.log(selectedGame + " game started");
     });
 
     $(".readyButton").click(function() {
@@ -108,6 +107,7 @@ $(document).ready(function() {
 
     socket.on("showLobby", function() {
         $(".gameView").not(".hidden").addClass("hidden");
+        $(".game").not(".hidden").addClass("hidden");
         $("#gameViewContainer").not(".hidden").addClass("hidden");
         $("#lobbyRoomView").removeClass("hidden");
     });
@@ -160,7 +160,12 @@ $(document).ready(function() {
             $("#" + game + "ReadyCountdown").html(countdownCount);
 
             if (countdownCount <= 0) {
+                // Reset previous html changes
+                currentReadyButtonClicked.attr("disabled", false);
+                currentReadyButtonClicked.html("Ready");
+                $("#" + game + "ReadyCountdown").html("");
                 clearInterval(countdownTimer);
+
                 $("#" + game + "ReadyView").addClass("hidden");
                 $("#" + game).removeClass("hidden");
 
