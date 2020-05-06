@@ -154,10 +154,10 @@ $(document).ready(function() {
         currentReadyButtonClicked.attr("disabled", true);
         // Ready countdown
         let countdownCount = 3;
-        $("#" + game + "ReadyCountdown").html(countdownCount);
+        $("#" + game + "ReadyCountdown").html(" " + String(countdownCount));
         let countdownTimer = setInterval(function() {
             countdownCount--;
-            $("#" + game + "ReadyCountdown").html(countdownCount);
+            $("#" + game + "ReadyCountdown").html(" " + String(countdownCount));
 
             if (countdownCount <= 0) {
                 // Reset previous html changes

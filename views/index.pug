@@ -20,7 +20,8 @@ html
                 input(type="text", name="roomJoinIdInput", placeholder="nasty-goat-72")#roomJoinIdInput
                 button(type="submit")#roomJoinSubmitButton Join Room
         .view.hidden#lobbyRoomView
-            h1 ID:
+            h1 Lobby
+            h3 ID:
                 span#roomIdDisplay
             #gameCreateForm.hidden
                 h3 Host Options:
@@ -40,20 +41,20 @@ html
             .gameView.hidden#cpsGameView
                 h1 Clicks Per Seconds (CPS) Game
                 #cpsGameReadyView
-                    p click the button as many times as possible in 10 seconds. :)
+                    p Click the button as fast as possible!
                     button.readyButton Ready
-                    p#cpsGameReadyCountdown
+                        span#cpsGameReadyCountdown
                 .game.hidden#cpsGame
                     p Time left:
                         span#cpsGameTimerDisplay
-                    button#cpsGameClickButton CLICK ME !!
+                    button#cpsGameClickButton CLICK ME
             .gameView.hidden#rngGameView
+                h1 this is the rng game
                 #rngGameReadyView
                     p rng
                     button.readyButton Ready
                     p#rngGameReadyCountdown
                 .game.hidden#rngGame
-                    h1 this is the rng game
         #chatbox
             #messageWrapper
                 ul#chatMessages
