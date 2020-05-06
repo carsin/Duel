@@ -15,6 +15,10 @@ Ideas:
     - Simple speed math test
     - Trivia (with a twist?)
     - Duel (reaction time)
+- Randomly generate game modifiers
+    - CPS Game:
+        - Double points period
+        - Random time length
 - Single or multiple rounds (bo3, bo5, bo7)
 - Optional award ceremony at end
 - Up to 8 players
